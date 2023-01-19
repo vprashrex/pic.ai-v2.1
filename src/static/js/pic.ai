@@ -1,0 +1,1389 @@
+var tl_starting, nav_animating = !1, nav_shrunk = !1, canvas_curr_width = 0, canvas_curr_height = 0, points = [], velocity2 = 12, canvas = document.getElementById("loader_canvas"), context = canvas.getContext("2d"), radius = 3, boundaryX = 156, boundaryY = 156, numberOfPoints = 40, isProcessing = !1, isFirstUse = !0, hasResult = !1, isAlive = !1, isLoaderShown = !1, width_limit = 2048, height_limit = 2048, hasTrimap = "true", runKNN = "true", scale_KNN = .5, isDebug = !1;
+function init() {
+    
+    canvas_output = $("#canvas_output")[0],
+    context_output = canvas_output.getContext("2d"),
+    context_output.clearRect(0, 0, canvas_output.width, canvas_output.height);
+    sessionStorage.removeItem("img");
+    window.name = "";
+    //sessionStorage.removeItem("anime_img");
+    sessionStorage.removeItem("multi-color");
+    sessionStorage.removeItem("img_width");
+    sessionStorage.removeItem("img_height");
+    setUI()
+}
+
+
+
+function setUI() {
+    $(window).scroll((function(e) {
+        $(window).scrollTop() > 50 && !nav_shrunk && !nav_animating ? (nav_animating = !0,
+        nav_shrunk = !0,
+        isMobile ? TweenMax.to("nav", .3, {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            ease: Power2.easeInOut,
+            onComplete: function() {
+                nav_animating = !1
+            }
+        }) : (TweenMax.to("nav", .3, {
+            height: "72px",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            ease: Power2.easeInOut,
+            onComplete: function() {
+                nav_animating = !1
+            }
+        }),
+        TweenMax.to("nav ul", .3, {
+            padding: "10px 0px 10px 0px",
+            ease: Power2.easeInOut
+        })),
+        TweenMax.to("#nav_shadow", .3, {
+            autoAlpha: 1,
+            ease: Linear.easeNone
+        })) : $(window).scrollTop() <= 50 && nav_shrunk && !nav_animating && (nav_animating = !0,
+        nav_shrunk = !1,
+        isMobile ? TweenMax.to("nav", .3, {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            ease: Power2.easeInOut,
+            onComplete: function() {
+                nav_animating = !1
+            }
+        }) : (TweenMax.to("nav", .3, {
+            height: "108px",
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            ease: Power2.easeInOut,
+            onComplete: function() {
+                nav_animating = !1
+            }
+        }),
+        TweenMax.to("nav ul", .3, {
+            padding: "20px 0px 30px 0px",
+            ease: Power2.easeInOut
+        })),
+        TweenMax.to("#nav_shadow", .3, {
+            autoAlpha: 0,
+            ease: Linear.easeNone
+        }))
+    }
+    )),
+    $(".bot_nav_txt").mouseover((function(e) {
+        isMobile || TweenMax.to(e.target, .2, {
+            color: "#999999",
+            ease: Linear.easeNone
+        })
+    }
+    )),
+    $(".bot_nav_txt").mouseout((function(e) {
+        isMobile || TweenMax.to(e.target, .2, {
+            color: "#000000",
+            ease: Linear.easeNone
+        })
+    }
+    )),
+    $(".bot_nav_txt").click((function(e) {
+        var t = $(e.target).attr("id").split("_")[2];
+        isMobile ? TweenMax.to(window, 1, {
+            scrollTo: {
+                y: "#sec_" + (parseInt(t) + 1),
+                offsetY: 120
+            },
+            ease: Power2.easeInOut
+        }) : TweenMax.to(window, 1, {
+            scrollTo: "#sec_" + (parseInt(t) + 1),
+            ease: Power2.easeInOut
+        })
+    }
+    )),
+    $("#bot_nav_logo_li, #bot_logo_mobile img").click((function(e) {
+        TweenMax.to(window, 1, {
+            scrollTo: 0,
+            ease: Power2.easeInOut
+        })
+    }
+    )),
+    document.getElementById("input-foto").addEventListener("change", readFile, !1),
+    $(".gen_bot").mousedown((function(e) {
+        var t = e.currentTarget
+          , a = function(e) {
+            var t = document
+              , a = window
+              , n = t.body
+              , o = void 0 !== a.pageXOffset ? a.pageXOffset : (t.documentElement || n.parentNode || n).scrollLeft
+              , i = void 0 !== a.pageYOffset ? a.pageYOffset : (t.documentElement || n.parentNode || n).scrollTop
+              , s = e.getBoundingClientRect();
+            if (e !== n)
+                for (var c = e.parentNode; c !== n; )
+                    o += c.scrollLeft,
+                    i += c.scrollTop,
+                    c = c.parentNode;
+            return {
+                bottom: s.bottom + i,
+                height: s.height,
+                left: s.left + o,
+                right: s.right + o,
+                top: s.top + i,
+                width: s.width
+            }
+        }(t)
+          , n = t.querySelector(".ripple");
+        $(n).remove(),
+        (n = document.createElement("span")).className = "ripple",
+        n.style.height = n.style.width = Math.max(a.width, a.height) + "px",
+        t.appendChild(n);
+        var o = e.pageY - a.top - n.offsetHeight / 2
+          , i = e.pageX - a.left - n.offsetWidth / 2;
+        return n.style.top = o + "px",
+        n.style.left = i + "px",
+        !1
+    }
+    )),
+    isMobile || ($("body").on("dragstart", (function(e) {
+        e.preventDefault(),
+        e.stopPropagation()
+    }
+    )),
+    $("body").on("dragover", (function(e) {
+        e.preventDefault(),
+        e.stopPropagation()
+    }
+    )),
+    $("body").on("dragenter", (function(e) {
+        e.preventDefault(),
+        e.stopPropagation(),
+        $("#drop_wrap").css("display", "flex"),
+        $("#full_cover").css("display", "block"),
+        TweenMax.to("#full_cover", .2, {
+            autoAlpha: 1,
+            ease: Linear.easeNone
+        })
+    }
+    )),
+    $("#full_cover").on("dragleave", (function(e) {
+        e.preventDefault(),
+        e.stopPropagation(),
+        TweenMax.to("#full_cover", .2, {
+            autoAlpha: 0,
+            ease: Linear.easeNone,
+            onComplete: function() {
+                $("#full_cover").css("display", "none"),
+                $("#drop_wrap").css("display", "none")
+            }
+        })
+    }
+    )),
+    $("body").on("drop", (function(e) {
+        if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
+            e.preventDefault(),
+            e.stopPropagation(),
+            TweenMax.to("#full_cover", .2, {
+                autoAlpha: 0,
+                ease: Linear.easeNone,
+                onComplete: function() {
+                    $("#full_cover").css("display", "none"),
+                    $("#drop_wrap").css("display", "none")
+                }
+            });
+            var t = {
+                target: {}
+            };
+            t.target.files = e.originalEvent.dataTransfer.files,
+            readFile(t)
+        }
+    }
+    ))),
+    $("#sec_1_bot_1").on("click", (function() {
+        isProcessing,
+        $("input[name=foto]").trigger("click")
+    }
+    )),
+    $("#canvas_input, #sec_2_bot_1").on("click", (function() {
+        isProcessing,
+        $("input[name=foto]").trigger("click")
+    }
+    )),
+    $("#sec_2_bot_2").on("click", (function() {
+        if (hasResult) {
+            var e = document.getElementById("canvas_output");
+            $("#download_a").attr("href", e.toDataURL("image/png")).attr("download", "pic_ai.png"),
+            $("#download_a")[0].click()
+        }
+    }
+    )),
+    $("#info_bot").on("click", (function() {
+        isProcessing || hideInfoCont()
+    }
+    ));
+    var e = new TimelineMax({
+        delay: 2,
+        repeatDelay: 2,
+        repeat: -1
+    });
+    e.add(TweenMax.to("#sec_1_clip_img", 1.5, {
+        clip: "rect(0px,300px,300px,300px)",
+        onComplete: function() {
+            $("#sec_1_clip_img").css("clip", "rect(0px,0px,300px,0px)")
+        }
+    }))
+    
+}
+
+
+function readFile(e) {
+    if (e.target.files && e.target.files[0]) {
+        var t = e.target.files[0]
+            , a = t.type;
+        $.inArray(a, ["image/jpeg", "image/png", "image/webp"]) < 0 ? (showInfoCont(0),
+        showInfoCont(0)) : window.loadImage(t, (function(e) {
+            var t = window.loadImage.scale(e, {
+                canvas: !0
+            });
+            document.getElementById("form").appendChild(t),
+            updateCanvasMeasures(t.width, t.height);
+            var a = 0;
+            t.width > t.height ? (a = t.width / canvas_output.width,
+            context_output.drawImage(t, 0, 0, t.width, t.height, canvas_output.width - t.width / a, canvas_output.height - t.height / a, t.width / a, t.height / a)) : (a = t.height / canvas_output.height,
+            context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / a) / 2, (canvas_output.height - t.height / a) / 2, t.width / a, t.height / a)),
+       
+            $("#sec_2_img_orig_dim").html(e.width + "x" + e.height + "px"),
+            $("#sec_2_img_alpha_dim").html("&nbsp;");
+            sessionStorage.setItem("img_width",t.width);
+            sessionStorage.setItem("img_height",t.height);
+            if (t.width > 6000 || t.height > 6000) {
+                showInfoCont(1),
+                sessionStorage.removeItem("img");
+            }
+            else
+                sendCanvas(),
+                
+                isMobile ? TweenMax.to(window, 1, {
+                    scrollTo: {
+                        y: "#sec_2_canvas_wrap_1",
+                        offsetY: 120
+                    },
+                    ease: Power2.easeInOut
+                }) : TweenMax.to(window, 1, {
+                    scrollTo: "#sec_2",
+                    ease: Power2.easeInOut
+                })
+        }
+        ))
+        
+    } else
+        
+        showInfoCont(4);
+}
+////////
+
+var addSwatch = document.getElementById('add-swatch');
+var modeToggle = document.getElementById('mode-toggle');
+var swatches = document.getElementsByClassName('default-swatches')[0];
+var colorIndicator = document.getElementById('color-indicator');
+var userSwatches = document.getElementById('user-swatches');
+
+var spectrumCanvas = document.getElementById('spectrum-canvas');
+var spectrumCtx = spectrumCanvas.getContext('2d');
+var spectrumCursor = document.getElementById('spectrum-cursor');
+var spectrumRect = spectrumCanvas.getBoundingClientRect();
+
+var hueCanvas = document.getElementById('hue-canvas');
+var hueCtx = hueCanvas.getContext('2d');
+var hueCursor = document.getElementById('hue-cursor');
+var hueRect = hueCanvas.getBoundingClientRect();
+
+var currentColor = '';
+var hue = 0;
+var saturation = 1;
+var lightness = .5;
+
+var rgbFields = document.getElementById('rgb-fields');
+var hexField = document.getElementById('hex-field');
+
+var red = document.getElementById('red');
+var blue = document.getElementById('blue');
+var green = document.getElementById('green');
+var hex = document.getElementById('hex');
+
+
+function ColorPicker() {
+    createShadeSpectrum();
+    createHueSpectrum();
+};
+
+
+function createSwatch(target, color) {
+    var swatch = document.createElement('button');
+    swatch.classList.add('swatch');
+    swatch.setAttribute('title', color);
+    swatch.style.backgroundColor = color;
+    swatch.addEventListener('click', function(){
+        var color = tinycolor(this.style.backgroundColor);
+        colorToPos(color);
+        setColorValues(color);
+    });
+    target.appendChild(swatch);
+    refreshElementRects();
+};
+
+
+function refreshElementRects() {
+    spectrumRect = spectrumCanvas.getBoundingClientRect();
+    hueRect = hueCanvas.getBoundingClientRect();
+}
+
+function createShadeSpectrum(color) {
+    canvas = spectrumCanvas;
+    ctx = spectrumCtx;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(!color) color = '#f00';
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var whiteGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    whiteGradient.addColorStop(0, "#fff");
+    whiteGradient.addColorStop(1, "transparent");
+    ctx.fillStyle = whiteGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var blackGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    blackGradient.addColorStop(0, "transparent");
+    blackGradient.addColorStop(1, "#000");
+    ctx.fillStyle = blackGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.addEventListener('mousedown', function(e) {
+        startGetSpectrumColor(e);
+    });
+};
+
+
+function createHueSpectrum() {
+    var canvas = hueCanvas;
+    var ctx = hueCtx;
+    var hueGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    hueGradient.addColorStop(0.00, "hsl(0, 100%, 50%)");
+    hueGradient.addColorStop(0.17, "hsl(298.8, 100%, 50%)");
+    hueGradient.addColorStop(0.33, "hsl(241.2, 100%, 50%)");
+    hueGradient.addColorStop(0.50, "hsl(180, 100%, 50%)");
+    hueGradient.addColorStop(0.67, "hsl(118.8, 100%, 50%)");
+    hueGradient.addColorStop(0.83, "hsl(61.2, 100%, 50%)");
+    hueGradient.addColorStop(1.00, "hsl(360, 100%, 50%)");
+    ctx.fillStyle = hueGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.addEventListener('mousedown', function(e) {
+        startGetHueColor(e);
+    });
+};
+
+function colorToHue(color) {
+    var color = tinycolor(color);
+    var hueString = tinycolor('hsl ' + color.toHsl().h + ' 1 .5').toHslString();
+    return hueString;
+};
+
+function colorToPos(color) {
+    var color = tinycolor(color);
+    var hsl = color.toHsl();
+    hue = hsl.h;
+    var hsv = color.toHsv();
+    var x = spectrumRect.width * hsv.s;
+    var y = spectrumRect.height * (1 - hsv.v);
+    var hueY = hueRect.height - ((hue / 360) * hueRect.height);
+    updateSpectrumCursor(x, y);
+    updateHueCursor(hueY);
+    setCurrentColor(color);
+    createShadeSpectrum(colorToHue(color));
+    
+};
+
+function setColorValues(color) {
+    var color = tinycolor(color);
+    var rgbValues = color.toRgb();
+    var hexValue = color.toHex();
+    red.value = rgbValues.r;
+    green.value = rgbValues.g;
+    blue.value = rgbValues.b;
+    hex.value = hexValue;
+};
+
+function setCurrentColor(color) {
+    color = tinycolor(color);
+    sessionStorage.setItem("multi-color",color);
+    spectrumCursor.style.backgroundColor = "#ccc";
+    hueCursor.style.backgroundColor = '#ccc';
+};
+
+function updateHueCursor(y) {
+    hueCursor.style.top = y + "px";
+}
+
+function updateSpectrumCursor(x, y) {
+    spectrumCursor.style.left = x + 'px';
+    spectrumCursor.style.top = y + 'px';
+};
+
+var startGetSpectrumColor = function(e) {
+    getSpectrumColor(e);
+    spectrumCursor.classList.add('dragging');
+    window.addEventListener('mousemove', getSpectrumColor);
+    window.addEventListener('mouseup', endGetSpectrumColor);
+};
+
+function getSpectrumColor(e) {
+    e.preventDefault();
+    var x = e.pageX - spectrumRect.left;
+    var y = e.pageY - spectrumRect.top;
+    if(x > spectrumRect.width) {x = spectrumRect.width}
+    if(x < 0) {x = 0}
+    if(y > spectrumRect.height) {y = spectrumRect.height}
+    if(y < 0) {y = .1}
+    var xRatio = x / spectrumRect.width * 100;
+    var yRatio = y / spectrumRect.height * 100;
+    var hsvValue = 1 - (yRatio / 100);
+    var hsvSaturation = xRatio / 100;
+    lightness = (hsvValue / 2) * (2 - hsvSaturation);
+    saturation = (hsvValue * hsvSaturation) / (1 - Math.abs(2 * lightness -1));
+    var color = tinycolor('hsl ' + hue + ' ' + saturation + ' ' + lightness);
+    setCurrentColor(color);
+    setColorValues(color);
+    updateSpectrumCursor(x, y);
+};
+
+function endGetSpectrumColor(e) {
+    spectrumCursor.classList.remove('dragging');
+    window.removeEventListener('mousemove', getSpectrumColor);
+};
+
+function startGetHueColor(e) {
+    getHueColor(e);
+    hueCursor.classList.add('dragging');
+    window.addEventListener('mousemove', getHueColor);
+    window.addEventListener('mouseup', endGetHueColor);
+}
+
+function getHueColor(e) {
+    e.preventDefault();
+    var y = e.pageY - hueRect.top;
+    if (y > hueRect.height){ y = hueRect.height};
+    if (y < 0) { y = 0};
+    var percent = y / hueRect.height;
+    hue = 360 - (360 * percent);
+    var hueColor = tinycolor('hsl ' + hue + ' 1 .5').toHslString();
+    var color = tinycolor('hsl ' + hue + ' ' + saturation + ' ' + lightness).toHslString();
+    createShadeSpectrum(hueColor);
+    updateHueCursor(y, hueColor);
+    setCurrentColor(color);
+    setColorValues(color);
+};
+
+function endGetHueColor(e) {
+    hueCursor.classList.remove('dragging');
+    window.removeEventListener('mousemove', getHueColor);
+};
+
+red.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
+
+green.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
+
+blue.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
+
+window.addEventListener('resize', function() {
+    refreshElementRects();
+});
+
+function preventScroll(e){
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+}
+
+$("#wrapper").mousedown(function(){
+    //document.querySelector('.color_cover').addEventListener('wheel', preventScroll);
+    //document.querySelector('.color-picker-panel').addEventListener('wheel', preventScroll);
+    var color_cover = document.querySelector('.color_cover');
+    var color_picker_panel = document.querySelector('.color-picker-panel');
+    bodyScrollLock.disableBodyScroll(color_cover);
+    bodyScrollLock.disableBodyScroll(color_picker_panel);
+    
+    
+    //bodyScrollLock.disableBodyScroll()
+
+    $(".color_cover").css("display","flex");
+    $(".color-picker-panel").css("display","block");
+    refreshElementRects();
+    isMobile ? TweenMax.to(window, 1, {
+        scrollTo: {
+            //y: "#sec_2_canvas_wrap_1",
+            y: "#sec_1",
+            offsetY: 120
+        },
+        ease: Power2.easeInOut
+    }) : TweenMax.to(window, 1, {
+        scrollTo: "#sec_1",
+        //scrollTo: "#sec_2",
+        ease: Power2.easeInOut
+    })
+})
+
+new ColorPicker(); 
+
+$("#ok-set").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    var color_cover = document.querySelector('.color_cover');
+    var color_picker_panel = document.querySelector('.color-picker-panel');
+    var colour = sessionStorage.getItem("multi-color");
+    updateCanvas(m,colour);
+    bodyScrollLock.enableBodyScroll(color_cover);
+    bodyScrollLock.enableBodyScroll(color_picker_panel);
+    $(".color-picker-panel").css("display","none");
+    $(".color_cover").css("display","none");
+})
+
+
+var filter = [];
+
+
+$("#white").mousedown(function(){
+    filter[0] = "glitch-effect";
+    var s = sessionStorage.getItem("img");
+
+    glitchEffect(s);
+    
+    //context_output.filter = "contrast(1.4) sepia(1) drop-shadow(-9px 9px 3px #e81)";
+    //updateCanvas(s,"rgb(255,255,255)");
+})
+
+
+//light-blue&&dark-blue_grad
+$("#red-color").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(0, 255, 235, 1)","rgba(7, 58, 187, 1)");
+})
+
+
+//yellow-pink_grad
+$("#pink").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(255, 255, 0, 1)","rgba(238, 130, 238, 1)");
+})
+
+//pink-red_grad
+$("#violet").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(244, 0, 255, 1)","rgba(255, 0, 0, 1)");
+    
+})
+
+//pink-blue_grad
+$("#purple").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(238, 130, 238, 1)","rgba(0, 0, 255, 1)");
+    
+})
+
+//darkred-pink_grad
+$("#purple2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(128, 32, 0, 1)","rgba(238, 130, 238, 1)");
+})
+
+//yellow-orange_grad
+$("#blue1").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(255, 255, 0, 1)","rgba(255, 59, 0, 1)");
+
+})
+
+//darkblue-pink_grad
+$("#blue2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(0, 0, 255, 1)","rgba(238, 130, 238, 1)");
+})
+
+//
+$("#blue3").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(255,154,158,1)", "rgba(250,208,196,1)");
+})
+
+//
+$("#blue4").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(4,97,159,1)","rgba(0,0,0,1)");
+})
+
+//
+$("#green1").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(49,49,49,1)","rgba(109,173,219,1)");
+})
+
+//
+$("#green2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(204,251,255,1)","rgba(239,150,197,1)");
+})
+
+//
+$("#yellow1").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(242,236,182,1)","rgba(169,111,68,1)");
+})
+
+//
+$("#yellow2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(255,27,107,1)","rgba(69,202,255,1)");
+})
+
+//
+$("#orange1").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(246,178,225,1)","rgba(88,18,106,1)");
+})
+
+//
+$("#orange2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    updateCanvas(m,"rgba(255, 235, 59, 1)","rgba(233, 30, 99, 1)");
+})
+
+$("#pink-gradient").mousedown(function(){
+    var m = sessionStorage.getItem("img");      //
+    
+    updateCanvas(m,"#614385","#516395");
+})
+
+//
+
+$("#grey1").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    chngbg(m,"static/img/burst-grey.jpg")
+})
+
+$("#grey2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    //chngbg(m,"static/img/burst-blue.jpg")
+    chngbg(m,"static/img/burst-blue.jpg");
+
+})
+
+$("#black").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    chngbg(m,"static/img/abstract-yellow.png");
+})
+
+
+$("#duo-tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"rgb(10,52,99)","rgb(8,183,108)","lighten","multiply");
+    //fg_filter(m,"rgb(8,183,108)","rgb(10,52,99)","multiply","lighten");
+})
+
+$("#default_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"rgb(247,57,43)","rgb(22,0,111)","multiply","lighten");
+})
+
+$("#coffe_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#FF69B4","#00ffff","lighten","multiply");
+})
+
+$("#bw_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#000000","#ffffff","lighten","multiply");
+})
+
+$("#yellow_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#151a02","#e94d5a","lighten","multiply");
+})
+
+$("#pink_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#f407bd","#120052","multiply","lighten");
+})
+
+$("#green_tone").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#edce06","#7b0331","multiply","lighten");
+})
+
+$("#duo-tone_2").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#ADD8E6","#00008b","multiply","lighten");
+})
+
+$("#duo-tone_3").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#d1ba8e","#2b1c34","multiply","lighten");
+})
+
+$("#duo-tone_4").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    fg_filter(m,"#1d1d37","#000000","exclusion","screen");
+})
+
+
+$("#duo-tone_5").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    //fg_filter(m,"#ffffff","#1d1d37","multiply","lighten");
+    fg_filter(m,"#263917","#09e9f2","lighten","color");
+})
+
+
+/* --------------------------------------------------------- */
+// MENU-TAB
+// Get all the tabs
+
+
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(clickedTab => {
+    // Add onClick event listener on each tab
+    clickedTab.addEventListener('click', () => {
+        // Remove the active class from all the tabs (this acts as a "hard" reset)
+        tabs.forEach(tab => {
+            tab.classList.remove('active'); 
+        });
+        // Add the active class on the clicked tab
+        clickedTab.classList.add('active');
+		const clickedTabBGColor = getComputedStyle(clickedTab).getPropertyValue('color');
+		//console.log(clickedTabBGColor);
+        if (clickedTabBGColor == "rgb(91, 55, 183)"){
+            document.getElementById("first-tab").style.display = "flex";
+            document.getElementById("second-tab").style.display = "none";
+            document.getElementById("third-tab").style.display = "none";
+        }
+        if (clickedTabBGColor == "rgb(201, 55, 157)"){
+            document.getElementById("first-tab").style.display = "none";
+            document.getElementById("second-tab").style.display = "flex";
+            document.getElementById("third-tab").style.display = "none";
+        }
+
+        if (clickedTabBGColor == "rgb(230, 169, 25)"){
+            document.getElementById("first-tab").style.display = "none";
+            document.getElementById("second-tab").style.display = "none";
+            document.getElementById("third-tab").style.display = "flex";
+        }
+    });
+});
+/* ---------------------------------------------------------------------- */
+
+
+// DUO-TONE 
+function fg_filter(e,color1,color2,mode1,mode2) {
+    //let e = sessionStorage.getItem("img");
+    let downloadedImg = new Image();
+    downloadedImg.crossOrigin = ""; // to allow us to manipulate the image without tainting canvas
+    
+    downloadedImg.onload = function () {
+        filter[2] = "fg_filter";
+        context_output.globalCompositeOperation = "source-in",
+        context_output.drawImage(canvas_output, 0, 0),
+        context_output.globalCompositeOperation = "source-over",
+        clearCanvas()
+        context_output.drawImage(downloadedImg, 0, 0, canvas_output.width, canvas_output.height); // draws image to canvas on load
+        // Converts to grayscale by averaging the values of each pixel
+        imageData = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height);
+        const pixels = imageData.data;
+        for (let i = 0; i < pixels.length; i += 4) {
+            const red = pixels[i];
+            const green = pixels[i + 1];
+            const blue = pixels[i + 2];
+            // Using relative luminance to convert to grayscale
+            const avg = Math.round((0.299 * red + 0.587 * green + 0.114 * blue) * 1);
+            pixels[i] = avg;
+            pixels[i + 1] = avg;
+            pixels[i + 2] = avg;
+        }
+        // Puts the grayscaled image data back into the canvas
+        
+        context_output.putImageData(imageData, 0,0);
+        
+        context_output.globalCompositeOperation = mode1;
+        context_output.fillStyle = color1;
+        context_output.fillRect(0, 0, canvas_output.width, canvas_output.height);
+        
+        // lighten
+        context_output.globalCompositeOperation = mode2;
+        context_output.fillStyle = color2; // colour for shadows
+        context_output.fillRect(0, 0, canvas_output.width, canvas_output.height);
+        
+    }
+    downloadedImg.src = "data:image/png;base64, " + e;
+}
+
+async function sendCanvas() {
+    isProcessing = !0,
+    showLoader();
+    var e = canvas_output.toDataURL()
+      , t = {};
+    t.img = e
+    
+    $.ajax({
+        url: "/",
+        type: "post",
+        data: JSON.stringify(t),
+        crossDomain: !0,
+        contentType: "application/json",
+        dataType: "json",
+        success: function(jsondata,textStatus,jqXHR) {
+            hasResult = !0,
+            payload = jsondata,
+            clearCanvas(),
+            $("#canvas_input").css("display","none"),
+            $(".modal-body").css("display","block"),
+            updateCanvas(payload.img_with_bk),
+            sessionStorage.setItem("img",payload.img_with_bk);
+            
+        },
+        error: function () {
+            showInfoCont(2),
+            hasResult = !1,
+            sessionStorage.removeItem("img")
+        },
+        complete: function() {
+            isProcessing = !1,
+            window.name = "",
+            hideLoader()
+        }
+    })
+}
+
+$("#animate").mousedown(function(){
+
+    var m = sessionStorage.getItem("img");
+    var h = sessionStorage.getItem("img_height");
+    var w = sessionStorage.getItem("img_width");
+    if (w > 6000 || h > 6000){
+        showInfoCont(1)
+    }
+    else{
+        if (m!==null){
+            if (window.name !== ""){
+                updateAnime(window.name);
+            }
+            else{
+                anime();
+            }
+        }
+    }
+    
+})
+
+
+
+
+
+async function anime() {
+    
+
+    isProcessing = !0,
+    showLoader();
+    var e = canvas_output.toDataURL()
+      , t = {};
+    t.img = e
+    $.ajax({
+        //url: "https://picai-animate.herokuapp.com/por2anime",
+        //url: "http://pic-api-dev.ap-south-1.elasticbeanstalk.com/por2anime",
+        url: "http://127.0.0.1:5000/por2anime",
+        type: "POST",
+        data: JSON.stringify(t),
+        contentType: "application/json",
+        dataType: "json",
+        crossDomain: true,
+        
+        success: function(jsondata){
+            hasResult = !0,
+            payload = jsondata,
+            updateAnime(payload.bg_img)
+            window.name = payload.bg_img
+        },
+        timeout:360000,
+        error:function (){
+            showInfoCont(2),
+            hasResult = !1,
+            window.name = ""
+        },
+        complete: function() {
+            isProcessing = !1,
+            hideLoader()
+        }
+    })
+}
+
+function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+    t = new Image();
+    if (arguments.length === 2) {
+      x = y = 0;
+      w = ctx.canvas.width;
+      h = ctx.canvas.height;
+    }
+  
+    // default offset is center
+    offsetX = typeof offsetX === "number" ? offsetX : 0.5;
+    offsetY = typeof offsetY === "number" ? offsetY : 0.5;
+  
+    // keep bounds [0.0, 1.0]
+    if (offsetX < 0) offsetX = 0;
+    if (offsetY < 0) offsetY = 0;
+    if (offsetX > 1) offsetX = 1;
+    if (offsetY > 1) offsetY = 1;
+  
+    var iw = img.width,
+      ih = img.height,
+      r = Math.min(w / iw, h / ih),
+      nw = iw * r,   // new prop. width
+      nh = ih * r,   // new prop. height
+      cx, cy, cw, ch, ar = 1;
+  
+    // decide which gap to fill
+    if (nw < w) ar = w / nw;
+    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;  // updated
+    nw *= ar;
+    nh *= ar;
+  
+    // calc source rectangle
+    cw = iw / (nw / w);
+    ch = ih / (nh / h);
+  
+    cx = (iw - cw) * offsetX;
+    cy = (ih - ch) * offsetY;
+  
+    // make sure source rectangle is valid
+    if (cx < 0) cx = 0;
+    if (cy < 0) cy = 0;
+    if (cw > iw) cw = iw;
+    if (ch > ih) ch = ih;
+    var drawBg = function(){
+        ctx.globalCompositeOperation = "destination-atop";
+        ctx.drawImage(t, 0,0, w, h);
+    }
+    t.onload = function(){
+        drawBg();
+    }
+    t.src = "static/img/bg.jpg";
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(img, cx, cy, cw, ch,  x, y, w, h);
+
+}
+
+function glitchEffect(e){
+    img = new Image(),
+    currentFrame = 0,
+    totalFrame = 20,
+    offset = 0;
+    img.crossOrigin = "Anonymous";
+    img.src = "data:image/png;base64, " + e;
+    img.onload = function() {     
+        glitchAnimation();
+    };
+    var glitchAnimation = function() {  
+        if (!(currentFrame % totalFrame) || currentFrame > totalFrame) {
+            clearCanvas();
+            drawImageProp(context_output, img, 0, 0, canvas_output.width, canvas_output.height);
+            imgData = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height);  
+            context_output.putImageData(imgData, 0,0);
+        }
+        imgData = pixelProcessor(imgData, 1, pixelFlick);
+        context_output.putImageData(imgData, 0, 0);
+    };
+    var img_width = sessionStorage.getItem("img_width");
+    var img_height = sessionStorage.getItem("img_height");
+    if (img_width<1080 || img_height<1080){
+        var glitch_value = 56
+    }
+    else if (img_width > 1080 || img_height > 1920){
+        var glitch_value = 96
+    }
+    else{
+        var glitch_value = 76
+    }
+    var pixelFlick = function(i, d) {
+        //d[i] = d[i + 16];
+        //d[i] = d[i + 36];
+        d[i] = d[i + glitch_value];
+    };
+    var pixelCooler = function(i, d) {
+        d[i] = 5;
+        d[i + 1] += randInt(1, 7);
+        d[i + 2] *= randInt(6, 8) + 1;
+    };
+
+    var glitchBlock = function(i, x, y) {
+        if (i>3) {
+            var spliceHeight = 1 + randInt(0, 50);
+            context_output.drawImage(canvas_output,
+            x,
+            y,
+            x,
+            spliceHeight,
+            randInt(0, x),
+            y,
+            randInt(x, canvas_output.width),
+            spliceHeight);
+        }
+    };
+
+    var glitchLine = function(i, x, y) {
+        var spliceHeight = 1 + randInt(1, 50);
+        //var spliceHeight = 91;
+        context_output.drawImage(canvas_output,
+          offset,
+          y,
+          canvas_output.width - offset * 2,
+          spliceHeight,
+          1 + randInt(0, offset * 2), //-offset / 3 + randInt(0, offset / 1.5),
+          y + randInt(0, 10),
+          canvas_output.width - offset,
+          spliceHeight
+        );
+    };
+
+    var pixelProcessor = function(imageData, step, callback) {
+        var data = imageData.data || [],
+          step = step * 4 || 4;
+    
+        if (data.length) {
+            var rgb = [];
+            for (var i = 0; i < data.length; i += step) {
+                callback && callback(i, data);
+            }
+            return imageData;
+        } else{
+            return imageData;
+        }
+    };
+
+    var drawGlitch = function(width, height, amount, callback) {
+        for (var i = 0; i < (amount || 10); i++) {
+          var x = Math.random() * width + 1,
+            y = Math.random() * height + 1;
+    
+          callback(i, x, y);
+        }
+    };
+    var randInt = function(a, b) {
+        return ~~(Math.random() * (b - a) + a);
+    };
+
+}
+
+
+function showbg(){
+    $(".color-list").css("display","flex")
+}
+
+var clearCanvas = function() {
+    context_output.clearRect(0, 0, canvas_output.width, canvas_output.height);
+};
+
+async function chngbg(e,img_path){
+    filter[1] = "background-change";
+    var t = new Image;
+    var img = new Image;
+    var drawImage = function(){
+        
+        //context_output.globalCompositeOperation = "destination-atop";
+        var e = t.width / canvas_output.width;
+        context_output.globalCompositeOperation = "destination-atop";
+        context_output.drawImage(img, 0, 0, img.width, img.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
+        for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
+        n[o] = n[o++] << 8,
+        context_output.putImageData(a, 0);
+        context_output.drawImage(img, 0, 0);
+        //context_output.globalCompositeOperation = "source-in";
+        
+    }
+    t.onload = function() {
+            
+        context_output.filter = "none";
+       
+        var e = t.width / canvas_output.width;
+        
+        context_output.globalCompositeOperation = "source-in",
+        
+        img.onload = function(){
+            drawImage()
+        }
+        img.src = img_path;
+        
+        context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
+        for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
+            n[o] = n[o++] << 8;
+        context_output.putImageData(a, 0),
+        context_output.drawImage(canvas_output, 0, 0),
+        context_output.globalCompositeOperation = "source-over",
+        //context_output.globalCompositeOperation = "destination-atop",
+
+        $("#sec_2_img_alpha_dim").html(canvas_output.width + "x" + canvas_output.height + "px"),
+        isMobile && TweenMax.to(window, 1, {
+            scrollTo: {
+                y: "#sec_2_canvas_wrap_2",
+                offsetY: 120
+            },
+            ease: Power2.easeInOut
+        })
+    }
+    ,
+    t.src = "data:image/png;base64, " + e;   
+    
+
+}
+
+function updateAnime(e) {
+    var t = new Image;
+    
+    t.onload = function() {
+        var e = t.width / canvas_output.width;
+
+        if (filter[0]=="glitch-effect"){
+            clearCanvas();
+            var index = filter.indexOf("glitch-effect");
+            filter.splice(index,1);
+            //console.log(filter); 
+        }
+
+        if (filter[1]=="background-change"){
+            clearCanvas();
+            var index = filter.indexOf("background-change");
+            filter.splice(index,1);
+            //console.log(filter); 
+        }
+
+        if (filter[2] == "fg_filter"){
+            clearCanvas();
+            var index = filter.indexOf("fg_filter");
+            filter.splice(index,2);
+            //console.log(filter); 
+        }
+
+        context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
+        for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
+            n[o] = n[o++] << 8;
+        context_output.globalCompositeOperation = "source-in",
+        context_output.putImageData(a, 0),
+        
+        //context_output.drawImage(canvas_output, 0, 0),
+        context_output.drawImage(canvas_output,0,0),
+        
+        context_output.globalCompositeOperation = "source-over",
+        $("#sec_2_img_alpha_dim").html(canvas_output.width + "x" + canvas_output.height + "px"),
+        isMobile && TweenMax.to(window, 1, {
+            scrollTo: {
+                y: "#sec_2_canvas_wrap_2",
+                offsetY: 120
+            },
+            ease: Power2.easeInOut
+        })
+    }
+    ,
+    t.src = "data:image/png;base64, " + e
+}
+
+async function updateCanvas(e,color,color1) {
+    var t = new Image;
+    context_output.filter = "none";
+    t.onload = function() {
+        var e = t.width / canvas_output.width;
+        
+        if (filter[0]=="glitch-effect"){
+            clearCanvas();
+            var index = filter.indexOf("glitch-effect");
+            filter.splice(index,1);
+            //console.log(filter); 
+        }
+
+        if (filter[1]=="background-change"){
+            clearCanvas();
+            var index = filter.indexOf("background-change");
+            filter.splice(index,1);
+            //console.log(filter); 
+        }
+
+        if (filter[2] == "fg_filter"){
+            clearCanvas();
+            var index = filter.indexOf("fg_filter");
+            filter.splice(index,2);
+            //console.log(filter); 
+        }
+
+        
+
+        context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
+        for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
+        n[o] = n[o++] << 8;
+        
+
+        if (color && color1){
+            var grad = context.createLinearGradient(0,100,canvas_output.width,canvas_output.height);
+            context_output.createLinearGradient(300,0,300,200);
+            grad.addColorStop(0,color);
+            grad.addColorStop(1,color1);
+            context_output.fillStyle = grad;
+            context_output.globalCompositeOperation = "destination-atop";
+            context_output.fillRect(0,0,canvas_output.width,canvas_output.height);
+            context_output.globalCompositeOperation = "source-in";
+            context_output.putImageData(a,0);
+         
+            context_output.drawImage(canvas_output,0,0);
+            context_output.globalCompositeOperation = "source-over";
+        }
+
+        if (color){
+            context_output.fillStyle = color;
+            context_output.globalCompositeOperation = "destination-atop";
+            context_output.fillRect(0,0,canvas_output.width,canvas_output.height);
+            context_output.globalCompositeOperation = "source-in";
+            context_output.putImageData(a,0);
+            context_output.drawImage(canvas_output,0,0);
+            context_output.globalCompositeOperation = "source-over";
+        }
+
+        $("#sec_2_img_alpha_dim").html(canvas_output.width + "x" + canvas_output.height + "px"),
+        isMobile && TweenMax.to(window, 1, {
+            scrollTo: {
+                y: "#sec_2_canvas_wrap_2",
+                offsetY: 120
+            },
+            ease: Power2.easeInOut
+        })
+    }
+    ,
+    t.src = "data:image/png;base64, " + e;
+    
+}
+
+function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+function updateCanvasMeasures(e, t) {
+    e < t ? t < height_limit ? (canvas_curr_height = t,
+    canvas_curr_width = e) : (canvas_curr_height = height_limit,
+    canvas_curr_width = e * (height_limit / t)) : e < width_limit ? (canvas_curr_width = e,
+    canvas_curr_height = t) : (canvas_curr_width = width_limit,
+    canvas_curr_height = t * (width_limit / e)),
+    canvas_output.width = canvas_output.width = canvas_curr_width,
+    canvas_output.height = canvas_output.height = canvas_curr_height,
+    canvas_output.style.width = canvas_output.style.width = "auto",
+    canvas_output.style.height = canvas_output.style.height = "auto"
+}
+
+function showInfoCont(e) {
+    $("#info_" + e).css("display", "block"),
+    TweenMax.to("#full_cover", .2, {
+        autoAlpha: 1,
+        ease: Linear.easeNone,
+        onStart: function() {
+            $("#info_wrap").css("display", "block"),
+            $("#full_cover").css("display", "block")
+        }
+    })
+}
+
+
+function hideInfoCont() {
+    TweenMax.to("#full_cover", .2, {
+        autoAlpha: 0,
+        ease: Linear.easeNone,
+        onComplete: function() {
+            $("#full_cover").css("display", "none"),
+            $("#info_wrap").css("display", "none"),
+            $(".info_wrap_messages").css("display", "none")
+        }
+    })
+}
+
+function genLoader() {
+    for (var e = 0; e < numberOfPoints; e++)
+        createPoint();
+    e = 0;
+    for (var t = points.length; e < t; e++) {
+        points[e];
+        points[e].buddy = 0 == e ? points[points.length - 1] : points[e - 1]
+    }
+    animate()
+}
+function createPoint() {
+    var e, t, a = {};
+    a.x = Math.random() * (boundaryX - 2 * radius) + radius,
+    a.y = Math.random() * (boundaryY - 2 * radius) + radius,
+    a.vx = (2 * Math.floor(Math.random()) - 1) * Math.random(),
+    e = Math.pow(a.vx, 2),
+    t = velocity2 - e,
+    a.vy = Math.sqrt(t) * (2 * Math.random() - 1),
+    points.push(a)
+}
+function resetVelocity(e, t, a) {
+    "x" == t ? (e.vx = a * Math.random(),
+    vx2 = Math.pow(e.vx, 2),
+    vy2 = velocity2 - vx2,
+    e.vy = Math.sqrt(vy2) * (2 * Math.random() - 1)) : (e.vy = a * Math.random(),
+    vy2 = Math.pow(e.vy, 2),
+    vx2 = velocity2 - vy2,
+    e.vx = Math.sqrt(vx2) * (2 * Math.random() - 1))
+}
+function drawCircle(e, t) {
+    context.beginPath(),
+    context.arc(e, t, radius, 0, 2 * Math.PI, !1),
+    context.fillStyle = "#666666",
+    context.fill()
+}
+function drawLine(e, t, a, n) {
+    context.beginPath(),
+    context.moveTo(e, t),
+    context.lineTo(a, n),
+    context.strokeStyle = "#aaaaaa",
+    context.stroke()
+}
+function draw() {
+    for (var e = 0, t = points.length; e < t; e++) {
+        var a = points[e];
+        a.x += a.vx,
+        a.y += a.vy,
+        drawCircle(a.x, a.y),
+        drawLine(a.x, a.y, a.buddy.x, a.buddy.y),
+        a.x < 2 * radius ? resetVelocity(a, "x", 1) : a.x > boundaryX - 2 * radius ? resetVelocity(a, "x", -1) : a.y < 2 * radius ? resetVelocity(a, "y", 1) : a.y > boundaryY - 2 * radius && resetVelocity(a, "y", -1)
+    }
+}
+function animate() {
+    isLoaderShown && (context.clearRect(0, 0, 164, 164),
+    draw()),
+    requestAnimationFrame(animate)
+}
+function showLoader() {
+    TweenMax.to("#full_cover_loader", .2, {
+        autoAlpha: 1,
+        ease: Linear.easeNone,
+        onStart: function() {
+            isLoaderShown = !0,
+            $("#loader_wrap").css("display", "flex"),
+            $("#full_cover_loader").css("display", "block")
+        }
+    })
+}
+function hideLoader() {
+    TweenMax.to("#full_cover_loader", .2, {
+        autoAlpha: 0,
+        ease: Linear.easeNone,
+        onComplete: function() {
+            isLoaderShown = !1,
+            $("#full_cover_loader").css("display", "none"),
+            $("#loader_wrap").css("display", "none")
+        }
+    })
+}
+
+$((function() {
+    init(),
+    genLoader()
+}
+));

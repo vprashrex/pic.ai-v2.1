@@ -1,0 +1,13 @@
+fastapi
+Jinja2 
+opencv-python
+Pillow
+onnx
+onnxruntime
+python-multipart
+fastapi
+imageio
+gunicorn
+uvicorn
+scikit-image
+gdown

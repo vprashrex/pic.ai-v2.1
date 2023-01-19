@@ -1,0 +1,10 @@
+deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 1024M
+
+git branch -m main v2.1
+git fetch origin
+git branch -u origin/v2.1 v2.1
+git remote set-head origin -a

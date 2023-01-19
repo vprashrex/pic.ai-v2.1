@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="s.css">
+        <link rel="stylesheet" href="static/fonts/fonts.css">
+        <script src="static/js/libs.min.js"></script>
+        <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fredoka One">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+
+        <style>
+            .item{
+                width:calc(100% - 10px);
+                height:calc(100% - 5px);
+                border-style: none;
+                border-radius:6px;
+                position: absolute;
+                cursor:pointer;
+            }
+
+            span.ripple {
+                position: absolute; /* The absolute position we mentioned earlier */
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 700ms linear;
+                background: rgba(255,255,255, 1);
+            }
+
+            span.border{
+                border:1px solid blue;
+            }
+
+            @keyframes border {
+                from {
+                    border:1px solid blue;
+                }
+
+                to{
+                    border:1px solid transparent;
+                }
+            }
+
+            @keyframes ripple {
+                to {
+                    transform: scale(8);
+                    opacity: 0;
+                }
+            }
+            .duo-wrapper{
+                display:none;  
+                background-color:#313132;
+                margin-top:4%;
+                padding-left:4%;
+                border-radius: 10px;
+            }
+
+            .duo-wrapper.active{
+                display:flex;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div class="side-container">
+            <div class="bar-wrapper" style="margin-top:-10px">
+                <div class="bar opened dark">
+                    <div id="duo-tone">
+                        <button class="sc-hEsumM jWcpcT sc-fONwsr WfRyB" data-toggle="ofset" style="background-image: url('https://cdn.img.ly/packages/imgly/photoeditorsdk/latest/assets/filter/categories/duotone.jpg'); animation-delay: 0s; height:120px;">
+                            <div id="wrapper-duo_tone">
+                                <div data-test="CardLabel" class="btns-text" >DuoTone<span class="duo-toggle"><i class='bx bxs-down-arrow'style='color:#ffffff;margin-top:20%;'></i></span></div>
+                            </div>      
+                        </button>
+                        <div class="duo-wrapper">
+                           
+                            <div class="wrap">
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tones" style="background:linear-gradient(15deg, rgb(10,52,99) 50%, rgb(8,183,108) 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="spotify"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="default_tone" style="background:linear-gradient(15deg, rgb(247,57,43) 50%, rgb(22,0,111) 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="coffe_tone" style="background:linear-gradient(15deg, #FF69B4 50%, #00ffff 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="coffe_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow_tone" style="background:linear-gradient(15deg, #151a02 50%, #e94d5a 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink_tone" style="background:linear-gradient(15deg, #f407bd 50%, #120052 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="green_tone" style="background:linear-gradient(15deg, #b97c29 50%, #140202 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                
+                            </div>
+                            <div class="wrap">
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_2" style="background:linear-gradient(15deg, #ADD8E6 50%, #00008b 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_3" style="background:linear-gradient(15deg, #d1ba8e 50%, #2b1c34 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_4" style="background:linear-gradient(15deg, #1d1d37 50%, #000000 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_5" style="background:linear-gradient(15deg, #263917 50%, #09e9f2 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="bw_tone" style="background:linear-gradient(15deg, #000000 50%, #ffffff 50.1%)">
+                                        <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                                    </button>
+                                </span>
+                              </div>
+                        </div>
+                        
+                    </div>
+                    <div id="effect">
+                        <button class="sc-hEsumM jWcpcT sc-fONwsr WfRyB" style="background-image: url('https://cdn.img.ly/packages/imgly/photoeditorsdk/latest/assets/filter/categories/duotone.jpg'); animation-delay: 0s; height:120px;">
+                            <div id="wrapper-duo_tone">
+                                <div data-test="CardLabel" class="btns-text">EFFECT<i class='bx bxs-down-arrow' style='color:#ffffff;margin-top:20%;'></i></div>
+                            </div>      
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <script src="s.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    </body>
+</html>

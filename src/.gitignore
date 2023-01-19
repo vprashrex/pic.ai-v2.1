@@ -1,0 +1,9 @@
+# weights for the model
+weights/
+
+# some crappy caches
+__pycache__/
+.vscode/
+
+# i don't know what is this
+.hintrc

@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="picai.dev is a PhotoMatte tool optimized for selfie and portrait photos.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Pic AI</title>
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Web Starter Kit">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
+    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="static/css/normalize.css">
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="stylesheet" href="static/css/bar.css">
+
+    <!--fonts-->
+    <link rel="stylesheet" href="static/fonts/fonts.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kaushan Script">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Basic&display=swap" rel="stylesheet">
+    
+    <!---- boxicon css -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- JS Libs -->
+    <script src="static/js/libs.min.js"></script>
+    <script src="static/js/bodyScrollLock.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfiTcAeAAAAAFH1coq1MTqzQoUxQxt5bbZTAfJX"></script>
+    <style>        
+      
+    </style>
+</head>
+<body>
+    <div>
+        
+
+        <nav>
+            <ul>
+                <!-- <li><span id="bot_nav_2" class="bot_nav_txt"></span></li> -->
+ 				<li id="bot_nav_logo_li"><span id="bot_nav_0" style="padding-top:1px;margin-top: -10px;margin-left:-30%;">
+                    <img src="static/img/logo4.svg" style="background-size:contain;padding-top:24px;">    
+                </span></li>
+                <li ><span id="bot_nav_5" class="bot_nav_txt" >                    
+                    <button class="download-bot" role="button" style="justify-content:space-between;background:#BD99F8;"><svg width="24" height="24" fill="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="button-icon-0-1-125 button-icon-d9-0-1-130" data-testid="start-icon"><path d="M11.25 2.742c0-.203.07-.375.21-.515a.741.741 0 0 1 .54-.235c.203 0 .375.078.516.235.156.14.234.312.234.515v11.485l2.25-2.25a.74.74 0 0 1 .54-.235c.202 0 .374.078.515.235.156.14.234.32.234.539a.668.668 0 0 1-.234.515l-3.516 3.54a.782.782 0 0 1-.539.21.782.782 0 0 1-.54-.21l-3.515-3.54a.667.667 0 0 1-.234-.515c0-.22.078-.399.234-.54a.667.667 0 0 1 .516-.234.74.74 0 0 1 .539.235l2.25 2.25V2.742zM3.398 13.711a.627.627 0 0 0-.21-.492.674.674 0 0 0-.493-.211.674.674 0 0 0-.492.21.627.627 0 0 0-.21.493v3.797c0 1.234.429 2.297 1.288 3.187.875.875 1.922 1.313 3.14 1.313h11.157c1.219 0 2.258-.438 3.117-1.313.875-.89 1.313-1.953 1.313-3.187V13.71a.627.627 0 0 0-.211-.492.674.674 0 0 0-.492-.211.674.674 0 0 0-.492.21.627.627 0 0 0-.211.493v3.797c0 .844-.297 1.57-.891 2.18-.578.593-1.29.89-2.133.89H6.422a2.937 2.937 0 0 1-2.156-.89 3.058 3.058 0 0 1-.868-2.18V13.71z"></path></svg>
+                       
+                    </button>
+                </span></li>
+            </ul>
+            <div id="nav_shadow"></div>
+        </nav>
+
+        <section id="sec_1">
+        </section>
+        <section id="sec_2">
+            <div class="content_wrap" >
+                <div id="sec_2_canvas_cont" >
+                    <div id="sec_2_canvas_wrap_1">
+                        <canvas id="canvas_input">
+                        </canvas>
+                        <canvas id="canvas_output"></canvas>
+               
+                    </div> 
+                </div>
+            </div>
+        </section>
+
+        <!-------------------------- MENU-CONTAINER ------------------------------>
+
+        <div class="menu-container">	
+            <div class="menu-bar" style="padding-top:20px;">
+                <button class="menu-opt" style="background-color: transparent;border:none;">
+                    <div id="menu_opt">
+                        <svg width="50" height="50" fill="#FFFFFF" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="sidebarIcon-0-1-148 menu_icons upload_img"><path d="M12 16.781c.203 0 .375-.07.516-.21a.74.74 0 0 0 .234-.54V4.571L15 6.82c.156.14.336.21.54.21.202 0 .374-.07.515-.21a.741.741 0 0 0 .234-.54.668.668 0 0 0-.234-.515l-3.516-3.54A.741.741 0 0 0 12 1.993a.741.741 0 0 0-.54.235L7.946 5.766a.668.668 0 0 0-.234.515c0 .203.078.383.234.54.14.14.313.21.516.21s.383-.07.539-.21l2.25-2.25v11.46c0 .203.07.383.21.54.157.14.337.21.54.21zm-9.305-3.773c.188 0 .352.07.493.21.14.126.21.29.21.493v3.797c0 .844.29 1.57.868 2.18.593.593 1.312.89 2.156.89h11.156c.844 0 1.555-.297 2.133-.89.594-.61.89-1.336.89-2.18V13.71c0-.203.07-.367.212-.492a.674.674 0 0 1 .492-.211c.187 0 .351.07.492.21.14.126.21.29.21.493v3.797c0 1.234-.437 2.297-1.312 3.187-.86.875-1.898 1.313-3.117 1.313H6.422c-1.219 0-2.266-.438-3.14-1.313-.86-.89-1.29-1.953-1.29-3.187V13.71c0-.203.07-.367.211-.492a.674.674 0 0 1 .492-.211z"></path></svg>
+                    </div>
+                    
+                </button>
+                <button class="menu-opt" style="background-color:transparent;border:none;">
+                    <div id="menu_opt">
+                        <svg width="50" height="50" fill="#FFFFFF" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="sidebarIcon-0-1-148 menu_icons backg"><path d="M6.54 19.04l12-12a.782.782 0 0 0 .21-.54.782.782 0 0 0-.21-.54.782.782 0 0 0-.54-.21.782.782 0 0 0-.54.21l-12 12a.782.782 0 0 0-.21.54c0 .203.07.383.21.54.157.14.337.21.54.21s.383-.07.54-.21zm12-9.071c.14.14.21.32.21.539 0 .203-.07.375-.21.515l-8.017 8.016a.73.73 0 0 1-.539.211.701.701 0 0 1-.515-.21.782.782 0 0 1-.211-.54c0-.203.07-.383.21-.54l7.993-7.991A.782.782 0 0 1 18 9.758c.203 0 .383.07.54.21zm-4.009-2.93a.782.782 0 0 0 .211-.539.782.782 0 0 0-.21-.54.73.73 0 0 0-.54-.21.701.701 0 0 0-.515.21L5.46 13.978a.73.73 0 0 0-.211.539c0 .203.07.375.21.515.157.14.337.211.54.211s.383-.07.54-.21l7.991-7.993zm4.008 6.938c.14.14.211.32.211.539 0 .203-.07.375-.21.515L14.53 19.04a.73.73 0 0 1-.539.211.701.701 0 0 1-.515-.21.741.741 0 0 1-.235-.54c0-.203.078-.383.235-.54l3.984-3.983a.741.741 0 0 1 .539-.235c.203 0 .383.078.54.235zm-8.016-6.938a.74.74 0 0 0 .235-.539.74.74 0 0 0-.235-.54.73.73 0 0 0-.539-.21.701.701 0 0 0-.515.21L5.46 9.97a.73.73 0 0 0-.211.539c0 .203.07.375.21.515a.74.74 0 0 0 .54.235.74.74 0 0 0 .54-.235l3.983-3.984zM1.993 6.5v12c0 1.11.39 2.055 1.171 2.836.781.781 1.727 1.172 2.836 1.172h12c1.11 0 2.055-.39 2.836-1.172.781-.781 1.172-1.727 1.172-2.836v-12c0-1.11-.39-2.055-1.172-2.836-.781-.781-1.727-1.172-2.836-1.172H6c-1.11 0-2.055.39-2.836 1.172-.781.781-1.172 1.727-1.172 2.836zM6 3.992h12c.688 0 1.273.25 1.758.75.5.485.75 1.07.75 1.758v12c0 .688-.25 1.281-.75 1.781a2.394 2.394 0 0 1-1.758.727H6a2.473 2.473 0 0 1-1.781-.727 2.473 2.473 0 0 1-.727-1.781v-12c0-.688.242-1.273.727-1.758.5-.5 1.093-.75 1.781-.75z"></path></svg>
+                    </div>                    
+                </button>
+                <button class="menu-opt" style="background-color:transparent;border:none;">
+                    <div id="menu_opt">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" width="50" height="50" viewBox="0 0 24 24" class="sidebarIcon-0-1-148 menu_icons enhance"><path d="m11 4-.5-1-.5 1-1 .125.834.708L9.5 6l1-.666 1 .666-.334-1.167.834-.708zm8.334 10.666L18.5 13l-.834 1.666-1.666.209 1.389 1.181L16.834 18l1.666-1.111L20.166 18l-.555-1.944L21 14.875zM6.667 6.333 6 5l-.667 1.333L4 6.5l1.111.944L4.667 9 6 8.111 7.333 9l-.444-1.556L8 6.5zM3.414 17c0 .534.208 1.036.586 1.414L5.586 20c.378.378.88.586 1.414.586s1.036-.208 1.414-.586L20 8.414c.378-.378.586-.88.586-1.414S20.378 5.964 20 5.586L18.414 4c-.756-.756-2.072-.756-2.828 0L4 15.586c-.378.378-.586.88-.586 1.414zM17 5.414 18.586 7 15 10.586 13.414 9 17 5.414z"></path></svg>
+                    </div>                    
+                </button>
+            </div>
+        </div>
+            
+        <!-------------------------- SIDEBAR-CONTAINER ------------------------------>
+        
+        <div class="container">
+            <div class="bar-wrapper">
+                <div class="bar opened dark">
+                    <button class="sc-hEsumM jWcpcT sc-fONwsr" id="bg-remover_id1" style="background-image: url('static/img/bgr_icon.jpg');height:120px;">
+                    </button>    
+                    
+                    <!------------------ANIME FILTER--------------->
+                    <button class="sc-hEsumM jWcpcT sc-fONwsr" id="por2anime_id1" style="background-image: url('static/img/anime_thumb.jpg'); animation-delay: 0s; height:120px;">
+                    </button>
+                    
+                    <!-------------------------------------------->
+
+                    <!--------------ARCANE FILTER------------------>
+                    <button class="sc-hEsumM jWcpcT sc-fONwsr" id="arcane_id" style="background-image: url('static/img/arcane_thumb.jpg'); animation-delay: 0s; height:120px;">
+                    </button>
+                    
+                    <!----------------------------------->
+                    <button class="sc-hEsumM jWcpcT sc-fONwsr" id="color_splash" style="background-image: url('static/img/color_splash.png'); animation-delay: 0s; height:120px;">
+                    </button>
+                </div>
+            </div>
+                <p class="pull-right">
+                    <a type="button" class="btn btns-collapse btns-sm" data-toggle="offcanvas">
+                        <!-- <i class="glyphicon glyphicon-chevron-down"></i> -->
+                        <i class='bx bx-chevron-right toggle'></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!---------ENHANCER class:enhance_container------------------------------>
+        <div class="enhance-container">
+            <div class="bar-wrapper">
+                <div class="bar opened dark">
+                    <div class="enhance_wrap">
+                        <div class="wrap">
+                            <span class="btn-enhance">
+                                <button data-v-5e450513="" data-hj-suppress="" class="item enhance_btn" id="e1">
+                                    <div data-test="CardLabel" class="enhance_text" style="font-size:40px;">E1</div>
+                                </button>
+                            </span>
+                            <span class="btn-enhance">
+                                <button data-v-5e450513="" data-hj-suppress="" class="item enhance_btn" id="e3">
+                                    <div data-test="CardLabel" class="enhance_text" style="font-size:40px;">E3</div>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="wrap">
+                            <span class="btn-enhance">
+                                <button data-v-5e450513="" data-hj-suppress="" class="item enhance_btn" id="e2">
+                                    <div data-test="CardLabel" class="enhance_text" style="font-size:40px;">E2</div>
+                                </button>
+                            </span>
+                            <span class="btn-enhance">
+                                <button data-v-5e450513="" data-hj-suppress="" class="item enhance_btn" id="e4">
+                                    <div data-test="CardLabel" class="enhance_text" style="font-size:40px;">E4</div>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!--BACKGROUND-EFFECT BAR class:side-container -------------------------->
+        <div class="side-container">
+            <div class="bar-wrapper">
+                <div class="bar opened dark">
+                    <div>
+                        <button class="sc-hEsumM jWcpcT sc-fONwsr WfRyB" data-toggle="ofset" style="background-image: url('https://cdn.img.ly/packages/imgly/photoeditorsdk/latest/assets/filter/categories/duotone.jpg'); animation-delay: 0s; height:120px;">
+                            <div id="wrapper-duo_tone">
+                                <div data-test="CardLabel" class="btns-text">DuoTone<i class='bx bxs-down-arrow'style='color:#ffffff;margin-top:20%;'></i></span></div>
+                            </div>      
+                        </button>
+                        <div class="duo-wrapper">
+                           
+                            <div class="wrap">
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone" style="background:linear-gradient(15deg, rgb(10,52,99) 50%, rgb(8,183,108) 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="default_tone" style="background:linear-gradient(15deg, rgb(247,57,43) 50%, rgb(22,0,111) 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="coffe_tone" style="background:linear-gradient(15deg, #FF69B4 50%, #00ffff 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow_tone" style="background:linear-gradient(15deg, #151a02 50%, #e94d5a 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink_tone" style="background:linear-gradient(15deg, #f407bd 50%, #120052 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="green_tone" style="background:linear-gradient(15deg, #b97c29 50%, #140202 50.1%)">
+                                    </button>
+                                </span>
+                                
+                            </div>
+                            <div class="wrap">
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_2" style="background:linear-gradient(15deg, #ADD8E6 50%, #00008b 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_3" style="background:linear-gradient(15deg, #d1ba8e 50%, #2b1c34 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_4" style="background:linear-gradient(15deg, #1d1d37 50%, #000000 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_5" style="background:linear-gradient(15deg, #263917 50%, #09e9f2 50.1%)">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="bw_tone" style="background:linear-gradient(15deg, #000000 50%, #ffffff 50.1%)">
+                                    </button>
+                                </span>
+                              </div>
+                        </div>
+                        
+                    </div>
+                    <div id="gradient">
+                        <button class="sc-hEsumM jWcpcT sc-fONwsr WfRyB" data-toggle="gradient-ofset" style="background-image: url('static/img/gradient_img.jpg'); animation-delay: 0s; height:120px;">
+                            <div id="wrapper-duo_tone">
+                                <div data-test="CardLabel" class="btns-text">GRADIENT<i class='bx bxs-down-arrow' style='color:#ffffff;margin-top:20%;'></i></div>
+                            </div>      
+                        </button>
+                        <div class="gradient-wrapper">
+                           
+                            <div class="wrap">
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="red-color" style="background:url(static/img/grad1.svg);">
+                                    
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink" style="background: url(static/img/grad2.svg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="violet" style="background:url(static/img/grad3.svg);">
+                                    </button>
+                                </span>
+                               
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="purple" style="background:url(static/img/grad4.svg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="purple2" style="background:url(static/img/grad5.svg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="green2" style="background:linear-gradient(180deg, rgba(204,251,255,1) 0%, rgba(239,150,197,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow2" style="background:linear-gradient(180deg, rgba(255,27,107,1) 0%, rgba(69,202,255,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="orange2" style="background:linear-gradient(135deg, rgba(255, 235, 59, 1) 0%, rgba(233, 30, 99, 1) 100%);">
+                                    </button>
+                                </span>
+                                
+                            </div>
+                            <div class="wrap">
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue1" style="background:url(static/img/grad6.svg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue2" style="background:url(static/img/grad7.svg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue3" style="background:linear-gradient(180deg, rgba(255,154,158,1) 0%, rgba(250,208,196,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue4" style="background:linear-gradient(135deg, rgba(4,97,159,1) 0%, rgba(0,0,0,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="green1" style="background:linear-gradient(135deg, rgba(49,49,49,1) 0%, rgba(109,173,219,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow1" style="background:linear-gradient(180deg, rgba(242,236,182,1) 0%, rgba(169,111,68,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="orange1" style="background:linear-gradient(135deg, rgba(246,178,225,1) 0%, rgba(88,18,106,1) 100%);">
+                                    </button>
+                                </span>
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink-gradient" style="background:linear-gradient(0deg, #614385 0%, #516395 100%);">
+                                    </button>
+                                </span>
+                              </div>
+                        </div>
+                    </div>
+                    <div id="effect">
+                        <button class="sc-hEsumM jWcpcT sc-fONwsr WfRyB" data-toggle="effect-ofset" style="background-image: url('static/img/rgb.png'); animation-delay: 0s; height:120px;">
+                            <div id="wrapper-duo_tone">
+                                <div data-test="CardLabel" class="btns-text">EFFECT<i class='bx bxs-down-arrow' style='color:#ffffff;margin-top:20%;'></i></div>
+                            </div>      
+                        </button>
+                        <div class="effect-wrapper">
+                           
+                            <div class="wrap">
+                                <span class="btn-1">
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="grey1" style="background:url(static/img/burst-grey-thumb.jpg);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="grey2" style="background:url(static/img/burst-blue-thumb.jpg);">
+                                    </button>
+                                </span>
+                                
+                            </div>
+                            <div class="wrap">
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="white" style="background:url(static/img/rgb.png);">
+                                    </button>
+                                </span>
+                                <span class="btn-1" >
+                                    <button data-v-5e450513="" data-hj-suppress="" class="item" id="black" style="background:url(static/img/burst-yellow-thumb.jpg);">
+
+                                    </button>
+                                </span>
+                                
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!----------------------------->
+       
+        <div class="tab-nav-container-wrapper" style="display:none;">
+            <div class="tab-nav-container">
+                <div class="tab active purple">
+                    Color/Gradient
+                </div>
+                <div class="tab pink">
+                    Effect
+                </div>
+                <div class="tab yellow">
+                    Duo-Tone
+                </div>
+            </div>
+    
+            <div data-v-5e450513="" data-v-89590660="" data-ios-emulate-scroll="x" class="color-list active" id="first-tab" style="border-radius:15px;">
+                
+                <!-- multi-color -->
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="wrapper" style="background-image:linear-gradient(to right, red, orange, yellow, green, blue, indigo)">
+                    <div data-v-5e450513="" class="foreground-thumbnail"></div>
+                </button>
+    
+                
+                
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="red-color" style="background:url(static/img/grad1.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail" ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink" style="background: url(static/img/grad2.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="violet" style="background:url(static/img/grad3.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="purple" style="background:url(static/img/grad4.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="purple2" style="background:url(static/img/grad5.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue1" style="background:url(static/img/grad6.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue2" style="background:url(static/img/grad7.svg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue3" style="background:linear-gradient(180deg, rgba(255,154,158,1) 0%, rgba(250,208,196,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="blue4" style="background:linear-gradient(135deg, rgba(4,97,159,1) 0%, rgba(0,0,0,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="green1" style="background:linear-gradient(135deg, rgba(49,49,49,1) 0%, rgba(109,173,219,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="green2" style="background:linear-gradient(180deg, rgba(204,251,255,1) 0%, rgba(239,150,197,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow1" style="background:linear-gradient(180deg, rgba(242,236,182,1) 0%, rgba(169,111,68,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow2" style="background:linear-gradient(180deg, rgba(255,27,107,1) 0%, rgba(69,202,255,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="orange1" style="background:linear-gradient(135deg, rgba(246,178,225,1) 0%, rgba(88,18,106,1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="orange2" style="background:linear-gradient(135deg, rgba(255, 235, 59, 1) 0%, rgba(233, 30, 99, 1) 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink-gradient" style="background:linear-gradient(0deg, #614385 0%, #516395 100%);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                
+            </div>
+    
+            <div data-v-5e450513="" data-v-89590660="" data-ios-emulate-scroll="x" class="color-list" id="second-tab" style="border-radius:15px;display: none;">
+                
+                <!-- animation -->
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="animate" style="background:url(static/img/anime_thumb.png);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+    
+    
+                <!-- glitch_effect -->
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="white" style="background:url(static/img/rgb.png);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="grey1" style="background:url(static/img/burst-grey-thumb.jpg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="grey2" style="background:url(static/img/burst-blue-thumb.jpg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="black" style="background:url(static/img/burst-yellow-thumb.jpg);">
+                    <div data-v-5e450513="" class="foreground-thumbnail"  ></div>
+                </button>
+    
+            </div>
+        
+            <div data-v-5e450513="" data-v-89590660="" data-ios-emulate-scroll="x" class="color-list" id="third-tab" style="border-radius:15px;display: none;">
+                <!-- duo_tone -->
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone" style="background:linear-gradient(15deg, rgb(10,52,99) 50%, rgb(8,183,108) 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="spotify"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="default_tone" style="background:linear-gradient(15deg, rgb(247,57,43) 50%, rgb(22,0,111) 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="default_color"  ></div>
+                </button>
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="coffe_tone" style="background:linear-gradient(15deg, #FF69B4 50%, #00ffff 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="coffe_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="yellow_tone" style="background:linear-gradient(15deg, #151a02 50%, #e94d5a 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="pink_tone" style="background:linear-gradient(15deg, #f407bd 50%, #120052 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="green_tone" style="background:linear-gradient(15deg, #b97c29 50%, #140202 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="bw_tone" style="background:linear-gradient(15deg, #000000 50%, #ffffff 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_2" style="background:linear-gradient(15deg, #ADD8E6 50%, #00008b 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_3" style="background:linear-gradient(15deg, #d1ba8e 50%, #2b1c34 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_4" style="background:linear-gradient(15deg, #1d1d37 50%, #000000 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+                <button data-v-5e450513="" data-hj-suppress="" class="item" id="duo-tone_5" style="background:linear-gradient(15deg, #263917 50%, #09e9f2 50.1%)">
+                    <div data-v-5e450513="" class="foreground-thumbnail" id="blade_color"  ></div>
+                </button>
+    
+            </div>
+
+        </div>
+        
+        
+
+        <div class="color_cover"></div>
+        <div class="color-picker-panel">
+            <div class="panel-row">
+              <div class="swatches default-swatches"></div>
+            </div>
+            <div class="panel-row">
+              <div class="spectrum-map">
+                <button id="spectrum-cursor" class="color-cursor"></button>
+                <canvas id="spectrum-canvas"></canvas>
+              </div>
+              <div class="hue-map">
+                <button id="hue-cursor" class="color-cursor"></button>
+                <canvas id="hue-canvas"></canvas>
+              </div>
+            </div>
+            <div class="panel-row">
+              <div id="rgb-fields" class="field-group value-fields rgb-fields active">
+                <div class="field-group">
+                  <label for="" class="field-label">R:</label>
+                  <input type="number" max="255" min="0" id="red" class="field-input rgb-input">
+                </div>
+                <div class="field-group">
+                  <label for="" class="field-label">G:</label>
+                  <input type="number" max="255" min="0" id="green" class="field-input rgb-input">
+                </div>
+                <div class="field-group">
+                  <label for="" class="field-label">B:</label>
+                  <input type="number" max="255" min="0" id="blue" class="field-input rgb-input">
+                </div>
+              </div>
+              <div id="hex-field" class="field-group value-fields hex-field">
+                <label for="" class="field-label">Hex:</label>
+                <input type="text" id="hex" class="field-input">
+              </div>
+            </div>
+            <div data-v-a8d3a73e class="buttonrow">
+                <button data-v-a8d3a73e="" id="ok-set" class="btn">
+                    OK
+                </button>
+        
+            </div>
+        </div>
+
+        <div id="full_cover_loader">
+            <div id="loader_cont">
+                <div id="loader_wrap">
+                    <canvas id="loader_canvas" width="160" height="160"></canvas>
+                    <div id="loader_copy">Processing...</div>
+                    <p>(15secs max depending on complexity of the image)</p>
+                </div>
+            </div>
+        </div>
+        <div id="full_cover">
+            <div id="info_cont">
+                <div id="info_wrap">
+                    <div id="info_0" class="info_wrap_messages"><strong>The image has an unsupported filetype.</strong><br /><br />You must select a .webp, .png or .jpg photo.<br /><br /></div>
+                    <div id="info_1" class="info_wrap_messages"><strong>Your image dimensions are invalid.</strong><br /><br />Image width and height must be less than 6000px.<br /><br /></div>
+                    <div id="info_2" class="info_wrap_messages"><strong>There was a network problem.</strong><br /><br />Please check your connection and try again in a few seconds.<br /><br /></div>
+                    <div id="info_3" class="info_wrap_messages"><strong>Image could not be loaded.</strong><br /><br />Please try with another image.<br /><br /></div>
+                    <div id="info_4" class="info_wrap_messages"><strong>No image selected.</strong><br /><br />Please select a selfie/portrait photo.<br /><br /></div>
+
+                    <!------------------- ENHANCE WARNING_SYSTEM ----------------------->
+                    <div id="info_5" class="info_wrap_messages"><strong>Warning.</strong><br /><br />Please select Arcane/Anime filter to use this enhancer.<br /><br /></div>
+                    <div id="info_6" class="info_wrap_messages" style="letter-spacing:1px;"><strong>Warning.</strong><br /><br/>Comming Soon!.<br/><br/></div>
+                    
+                    
+                    <div id="info_bot" class="gen_bot">Got it!</div>
+                </div>
+                <div id="drop_wrap">
+                    <div id="drop_info"><span id="drop_info_copy_1">Drag & drop an image</span><br/><span id="drop_info_copy_2">(Max result size 2048x2048px - WebP, PNG or JPEG - 64Mb)</span><br/><br/><img src="static/img/85fb3920e4277b8cb854.svg" width="120" height="120" /></div>
+                </div>
+                <div id="loader_wrap">
+                    <canvas id="loader_canvas" width="160" height="160"></canvas>
+                    <div id="loader_copy">Processing...</div>
+                </div>
+            </div>
+        </div>
+        <div id="form">
+            <input type="file" id="input-foto" accept="image/*" name="foto" value="">
+            <a id="download_a" href=""></a>
+        </div>
+    </div>
+        
+    <script src="static/js/picai_3.min.js"></script>
+    <script src="static/js/script.js"></script>
+
+    <script src="https://raw.githubusercontent.com/bgrins/TinyColor/master/tinycolor.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="static/js/tinycolor.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5E7NTK4KE"></script>
+    
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-G5E7NTK4KE');
+
+        
+    </script>
+  </body>
+</html>
