@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body{
+                overflow:hidden;
+            }
+            .wrapper {
+                display: table;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                background:transparent;
+            }
+            .container {
+                display: sticky;
+                vertical-align: middle;
+            }
+            .canvas-container {
+                position: absolute;
+                max-width: 1024px;
+                min-width: 320px;
+                margin: 0 auto;
+            }
+           
+
+        </style>
+    </head>
+    <body id="fiexdBody">
+        <div class="wrapper">
+            <div class="container">
+              <div class="canvas-container">
+                <canvas id="terrain" width="1368" height="885"></canvas>
+
+              </div>
+            </div>
+        </div>
+        <script>
+    
+                
+
+            var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+         
+            var canvas_input = document.getElementById("terrain");
+            var ctx = canvas_input.getContext("2d");
+            ctx.fillStyle = "#262626";
+            ctx.fillRect(0,0,800,600);
+
+
+
+            console.log(w)
+         
+         
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    </body>
+</html>

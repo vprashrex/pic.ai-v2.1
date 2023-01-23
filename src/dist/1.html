@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+    <style>
+        #mobilui-cover{position: fixed; top:0px; left:0px; width:100%; height:100%;background-color:rgba(245, 230, 230, 0.8);z-index: 300;}
+        #info_cont{width:100%; height:100%;display:flex;align-items: center;justify-content: center;}
+            #info_wrap{max-width:400px;background-color:rgba(255,255,255, 0.8); padding:20px 20px 10px 20px; margin: 20px; display:flex; text-align:center; font-size:14px; line-height: 16px; color:#333333; letter-spacing: 1px;}
+            #info_0{}
+
+        li{
+            list-style: none;
+            padding-left: 50px;
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div id="mobilui-cover">
+        
+        <div id="info_wrap">
+            <li id="bot_nav_logo_li"><span id="bot_nav_0" style="padding-top:1px;margin-top: -10px;margin-left:-30%;">
+                <img src="static/img/logo4.svg" style="background-size:contain;padding-top:24px;">    
+            </span></li>
+            <div id="info_0" class="info_wrap_messages"><strong>The image has an unsupported filetype.</strong><br /><br />You must select a .webp, .png or .jpg photo.<br /><br /></div>
+        </div>
+
+    </div>
+
+    <script>
+        var w = document.querySelector("#width");
+        var h = document.querySelector("#height");
+
+
+        function getDimensions() {
+        
+            if (window.innerWidth < 768){
+                console.log("yes");
+            }
+
+            /* console.log();
+            console.log(window.innerHeight) */
+        }
+
+        //lListen for window.resize
+        window.addEventListener('resize', getDimensions);
+
+        // call once to initialize page
+        getDimensions();
+
+    </script>
+</body>
+</html>

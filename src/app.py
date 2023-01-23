@@ -228,4 +228,4 @@ async def remove_bg(request: Request, file:dict):
         return JSONResponse(status_code=400, content={"error": str(ex)})
 
 if __name__ == '__main__':
-    uvicorn.run(app,port=5000)
+    uvicorn.run(app,port=9000)

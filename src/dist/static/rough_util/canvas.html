@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body{
+                overflow:hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="cnv" width="800" height="800"></canvas>
+    </body>
+    <script>
+        let cnv;
+
+        window.onload = function(){
+            cnv = document.getElementById("cnv");
+            cnv.style.backgroundColor = "#282a36";
+            prepareDocument();
+            resize();
+            drawRect();
+        }
+
+        window.onresize = function(){
+            console.log("resizing . ");
+            resize();
+            drawRect();
+        }
+
+        function resize(){
+            cnv.width = window.innerWidth;
+            cnv.height = window.innerHeight;
+        }
+
+        function prepareDocument(){
+            document.body.style.padding = "0px";
+            document.body.style.margin = "0px";
+        }
+
+        function drawRect(){
+            let ctx = cnv.getContext("2d");
+            let width = cnv.width * 0.2;
+            let height = cnv.height * 0.2;
+
+            let xpos = cnv.width/2 - width/2;
+            let ypos = cnv.height/2 - height/2;
+
+            ctx.fillStyle = "rgb(255,255,255)";
+            ctx.fillRect(xpos,ypos,width,height);
+        }
+    </script>
+</html>

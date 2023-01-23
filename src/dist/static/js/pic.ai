@@ -1,25 +1,16 @@
-
-
 var tl_starting, nav_animating = !1, nav_shrunk = !1, canvas_curr_width = 0, canvas_curr_height = 0, points = [], velocity2 = 12, canvas = document.getElementById("loader_canvas"), context = canvas.getContext("2d"), radius = 3, boundaryX = 156, boundaryY = 156, numberOfPoints = 40, isProcessing = !1, isFirstUse = !0, hasResult = !1, isAlive = !1, isLoaderShown = !1, width_limit = 2048, height_limit = 2048, hasTrimap = "true", runKNN = "true", scale_KNN = .5, isDebug = !1;
-
-
 function init() {
     
     canvas_output = $("#canvas_output")[0],
     context_output = canvas_output.getContext("2d"),
     context_output.clearRect(0, 0, canvas_output.width, canvas_output.height);
     sessionStorage.removeItem("img");
-    window.anime_filt = "";
-    window.arcane_filt = "";
-    window.og_img = "";
-    window.grayscale = "";
-    window.neural_filt = "";
-    window.enhancer_json = {};
+    window.name = "";
+    //sessionStorage.removeItem("anime_img");
     sessionStorage.removeItem("multi-color");
     sessionStorage.removeItem("img_width");
     sessionStorage.removeItem("img_height");
-    setUI();
-    
+    setUI()
 }
 
 
@@ -110,9 +101,6 @@ function setUI() {
         })
     }
     )),
-
-  
-
     document.getElementById("input-foto").addEventListener("change", readFile, !1),
     $(".gen_bot").mousedown((function(e) {
         var t = e.currentTarget
@@ -203,14 +191,17 @@ function setUI() {
         }
     }
     ))),
-    $(".upload_img").on("click", (function() {
+    $("#sec_1_bot_1").on("click", (function() {
         isProcessing,
         $("input[name=foto]").trigger("click")
     }
-    ));
-
-    
-    $(".download-bot").on("click", (function() {
+    )),
+    $("#canvas_input, #sec_2_bot_1").on("click", (function() {
+        isProcessing,
+        $("input[name=foto]").trigger("click")
+    }
+    )),
+    $("#sec_2_bot_2").on("click", (function() {
         if (hasResult) {
             var e = document.getElementById("canvas_output");
             $("#download_a").attr("href", e.toDataURL("image/png")).attr("download", "pic_ai.png"),
@@ -218,7 +209,6 @@ function setUI() {
         }
     }
     )),
-    
     $("#info_bot").on("click", (function() {
         isProcessing || hideInfoCont()
     }
@@ -234,61 +224,14 @@ function setUI() {
             $("#sec_1_clip_img").css("clip", "rect(0px,0px,300px,0px)")
         }
     }))
-    /*------------------- CANVAS INPUT ---------------------------- */
-    let cnv;
-    window.onload = function(){
-        cnv = document.getElementById("canvas_input");
-        cnv.style.backgroundColor = "#303030";
-        prepareDocument();
-        resize();
-        drawRect();
-    }
-
-    window.onresize = function(){
-        resize();
-        drawRect();
-    }
-    function resize(){
-        cnv.width = window.innerWidth;
-        cnv.height = window.innerHeight;
-    }
-
-    function prepareDocument(){
-        document.body.style.padding = "0px";
-        document.body.style.margin = "0px";
-    }
-
-    function drawRect(){
-        let ctx = cnv.getContext("2d");
-        let width = cnv.width * 0.4;
-        let height = cnv.height * 0.6;
-
-        let xpos = cnv.width/2 - width/2;
-        let ypos = cnv.height/2 - height/2;
-
-        ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillRect(xpos,ypos,width,height);
-    }
+    
 }
 
-function reset_item(){
-    sessionStorage.removeItem("img");
-    clearCanvas();
-    window.og_img = "";
-    window.anime_filt = "";
-    window.arcane_filt = "";
-    window.grayscale = "";
-    window.neural_filt = "";
-    window.enhancer_json = {}
-}
 
 function readFile(e) {
     if (e.target.files && e.target.files[0]) {
-        reset_item();
-        
         var t = e.target.files[0]
             , a = t.type;
-        
         $.inArray(a, ["image/jpeg", "image/png", "image/webp"]) < 0 ? (showInfoCont(0),
         showInfoCont(0)) : window.loadImage(t, (function(e) {
             var t = window.loadImage.scale(e, {
@@ -297,30 +240,31 @@ function readFile(e) {
             document.getElementById("form").appendChild(t),
             updateCanvasMeasures(t.width, t.height);
             var a = 0;
-            
             t.width > t.height ? (a = t.width / canvas_output.width,
-            context_output.drawImage(t, 0,0, t.width, t.height, canvas_output.width - t.width / a, canvas_output.height - t.height / a, t.width / a, t.height / a)) : (a = t.height / canvas_output.height,
-            context_output.drawImage(t, 0,0, t.width, t.height, (canvas_output.width - t.width / a) / 2, (canvas_output.height - t.height / a) / 2, t.width / a, t.height / a));
-            
-            window.og_img = canvas_output.toDataURL();
+            context_output.drawImage(t, 0, 0, t.width, t.height, canvas_output.width - t.width / a, canvas_output.height - t.height / a, t.width / a, t.height / a)) : (a = t.height / canvas_output.height,
+            context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / a) / 2, (canvas_output.height - t.height / a) / 2, t.width / a, t.height / a)),
+       
+            $("#sec_2_img_orig_dim").html(e.width + "x" + e.height + "px"),
+            $("#sec_2_img_alpha_dim").html("&nbsp;");
             sessionStorage.setItem("img_width",t.width);
             sessionStorage.setItem("img_height",t.height);
-            
-            
-            $("#canvas_input").css("display","none"),
-            $("#canvas_output").css("display","block"),
-
-            
-            isMobile ? TweenMax.to(window, 1, {
-                scrollTo: {
-                    y: "#sec_2_canvas_wrap_1",
-                    offsetY: 120
-                },
-                ease: Power2.easeInOut
-            }) : TweenMax.to(window, 1, {
-                scrollTo: "#sec_2",
-                ease: Power2.easeInOut
-            })
+            if (t.width > 6000 || t.height > 6000) {
+                showInfoCont(1),
+                sessionStorage.removeItem("img");
+            }
+            else
+                sendCanvas(),
+                
+                isMobile ? TweenMax.to(window, 1, {
+                    scrollTo: {
+                        y: "#sec_2_canvas_wrap_1",
+                        offsetY: 120
+                    },
+                    ease: Power2.easeInOut
+                }) : TweenMax.to(window, 1, {
+                    scrollTo: "#sec_2",
+                    ease: Power2.easeInOut
+                })
         }
         ))
         
@@ -330,376 +274,275 @@ function readFile(e) {
 }
 ////////
 
-$("#bg-remover_id1").mousedown(function(){
+var addSwatch = document.getElementById('add-swatch');
+var modeToggle = document.getElementById('mode-toggle');
+var swatches = document.getElementsByClassName('default-swatches')[0];
+var colorIndicator = document.getElementById('color-indicator');
+var userSwatches = document.getElementById('user-swatches');
+
+var spectrumCanvas = document.getElementById('spectrum-canvas');
+var spectrumCtx = spectrumCanvas.getContext('2d');
+var spectrumCursor = document.getElementById('spectrum-cursor');
+var spectrumRect = spectrumCanvas.getBoundingClientRect();
+
+var hueCanvas = document.getElementById('hue-canvas');
+var hueCtx = hueCanvas.getContext('2d');
+var hueCursor = document.getElementById('hue-cursor');
+var hueRect = hueCanvas.getBoundingClientRect();
+
+var currentColor = '';
+var hue = 0;
+var saturation = 1;
+var lightness = .5;
+
+var rgbFields = document.getElementById('rgb-fields');
+var hexField = document.getElementById('hex-field');
+
+var red = document.getElementById('red');
+var blue = document.getElementById('blue');
+var green = document.getElementById('green');
+var hex = document.getElementById('hex');
+
+
+function ColorPicker() {
+    createShadeSpectrum();
+    createHueSpectrum();
+};
+
+
+function createSwatch(target, color) {
+    var swatch = document.createElement('button');
+    swatch.classList.add('swatch');
+    swatch.setAttribute('title', color);
+    swatch.style.backgroundColor = color;
+    swatch.addEventListener('click', function(){
+        var color = tinycolor(this.style.backgroundColor);
+        colorToPos(color);
+        setColorValues(color);
+    });
+    target.appendChild(swatch);
+    refreshElementRects();
+};
+
+
+function refreshElementRects() {
+    spectrumRect = spectrumCanvas.getBoundingClientRect();
+    hueRect = hueCanvas.getBoundingClientRect();
+}
+
+function createShadeSpectrum(color) {
+    canvas = spectrumCanvas;
+    ctx = spectrumCtx;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(!color) color = '#f00';
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var whiteGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    whiteGradient.addColorStop(0, "#fff");
+    whiteGradient.addColorStop(1, "transparent");
+    ctx.fillStyle = whiteGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var blackGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    blackGradient.addColorStop(0, "transparent");
+    blackGradient.addColorStop(1, "#000");
+    ctx.fillStyle = blackGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.addEventListener('mousedown', function(e) {
+        startGetSpectrumColor(e);
+    });
+};
+
+
+function createHueSpectrum() {
+    var canvas = hueCanvas;
+    var ctx = hueCtx;
+    var hueGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    hueGradient.addColorStop(0.00, "hsl(0, 100%, 50%)");
+    hueGradient.addColorStop(0.17, "hsl(298.8, 100%, 50%)");
+    hueGradient.addColorStop(0.33, "hsl(241.2, 100%, 50%)");
+    hueGradient.addColorStop(0.50, "hsl(180, 100%, 50%)");
+    hueGradient.addColorStop(0.67, "hsl(118.8, 100%, 50%)");
+    hueGradient.addColorStop(0.83, "hsl(61.2, 100%, 50%)");
+    hueGradient.addColorStop(1.00, "hsl(360, 100%, 50%)");
+    ctx.fillStyle = hueGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.addEventListener('mousedown', function(e) {
+        startGetHueColor(e);
+    });
+};
+
+function colorToHue(color) {
+    var color = tinycolor(color);
+    var hueString = tinycolor('hsl ' + color.toHsl().h + ' 1 .5').toHslString();
+    return hueString;
+};
+
+function colorToPos(color) {
+    var color = tinycolor(color);
+    var hsl = color.toHsl();
+    hue = hsl.h;
+    var hsv = color.toHsv();
+    var x = spectrumRect.width * hsv.s;
+    var y = spectrumRect.height * (1 - hsv.v);
+    var hueY = hueRect.height - ((hue / 360) * hueRect.height);
+    updateSpectrumCursor(x, y);
+    updateHueCursor(hueY);
+    setCurrentColor(color);
+    createShadeSpectrum(colorToHue(color));
     
-    window.neural_filt = "";
-    var m = sessionStorage.getItem("img");
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1),
-        sessionStorage.removeItem("img");
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-    }
-    else{
-        
-        if (m!==null){
-            updateCanvas(m);
-        }
-        else{
-            sendCanvas();
-        }
+};
 
-    }
-})
+function setColorValues(color) {
+    var color = tinycolor(color);
+    var rgbValues = color.toRgb();
+    var hexValue = color.toHex();
+    red.value = rgbValues.r;
+    green.value = rgbValues.g;
+    blue.value = rgbValues.b;
+    hex.value = hexValue;
+};
 
+function setCurrentColor(color) {
+    color = tinycolor(color);
+    sessionStorage.setItem("multi-color",color);
+    spectrumCursor.style.backgroundColor = "#ccc";
+    hueCursor.style.backgroundColor = '#ccc';
+};
 
-$("#por2anime_id1").mousedown(function(){
-    window.neural_filt = "anime";
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1);
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.anime_filt !== ""){
-            style_filter[0] = window.anime_filt;
-            updateAnime(window.anime_filt);   
-        }
-        else{
-            anime();
-        }
-    }
-})
-
-$("#color_splash").mousedown(function(){
-    window.neural_filt = "";
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1),
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.grayscale !== ""){
-            updateCanvas(window.grayscale);
-        }
-        else{
-            colorSplash();
-        }
-    }
-
-})
-
-
-function reset_canvas(){
-    $("#canvas_output").css("display","block");
-    
+function updateHueCursor(y) {
+    hueCursor.style.top = y + "px";
 }
 
+function updateSpectrumCursor(x, y) {
+    spectrumCursor.style.left = x + 'px';
+    spectrumCursor.style.top = y + 'px';
+};
 
-async function anime() {
-    isProcessing = !0,
-    showLoader();
-    var e = window.og_img
-      , t = {};
-    t.img = e
-    $.ajax({
-        //url: "https://picai-animate.herokuapp.com/por2anime",
-        //url: "http://pic-api-dev.ap-south-1.elasticbeanstalk.com/por2anime",
-        //url: "http://127.0.0.1:5000/por2anime",
-        url:'/por2anime',
-        type: "POST",
-        data: JSON.stringify(t),
-        contentType: "application/json",
-        dataType: "json",
-        crossDomain: true,
-        
-        success: function(jsondata){
-            hasResult = !0,
-            payload = jsondata,
-            updateAnime(payload.bg_img),
-            window.anime_filt = payload.bg_img;
-            style_filter[0] = window.anime_filt;
-        },
-        timeout:360000,
-        error:function (){
-            showInfoCont(2),
-            hasResult = !1,
-            window.anime_filt = "";
-            reset_canvas();
+var startGetSpectrumColor = function(e) {
+    getSpectrumColor(e);
+    spectrumCursor.classList.add('dragging');
+    window.addEventListener('mousemove', getSpectrumColor);
+    window.addEventListener('mouseup', endGetSpectrumColor);
+};
 
-        },
-        complete: function() {
-            isProcessing = !1,
-            hideLoader();
-            $(".side-container").removeClass("visible");
-            $(".enhance-container").addClass("visible");
-        }
-    })
+function getSpectrumColor(e) {
+    e.preventDefault();
+    var x = e.pageX - spectrumRect.left;
+    var y = e.pageY - spectrumRect.top;
+    if(x > spectrumRect.width) {x = spectrumRect.width}
+    if(x < 0) {x = 0}
+    if(y > spectrumRect.height) {y = spectrumRect.height}
+    if(y < 0) {y = .1}
+    var xRatio = x / spectrumRect.width * 100;
+    var yRatio = y / spectrumRect.height * 100;
+    var hsvValue = 1 - (yRatio / 100);
+    var hsvSaturation = xRatio / 100;
+    lightness = (hsvValue / 2) * (2 - hsvSaturation);
+    saturation = (hsvValue * hsvSaturation) / (1 - Math.abs(2 * lightness -1));
+    var color = tinycolor('hsl ' + hue + ' ' + saturation + ' ' + lightness);
+    setCurrentColor(color);
+    setColorValues(color);
+    updateSpectrumCursor(x, y);
+};
+
+function endGetSpectrumColor(e) {
+    spectrumCursor.classList.remove('dragging');
+    window.removeEventListener('mousemove', getSpectrumColor);
+};
+
+function startGetHueColor(e) {
+    getHueColor(e);
+    hueCursor.classList.add('dragging');
+    window.addEventListener('mousemove', getHueColor);
+    window.addEventListener('mouseup', endGetHueColor);
 }
 
+function getHueColor(e) {
+    e.preventDefault();
+    var y = e.pageY - hueRect.top;
+    if (y > hueRect.height){ y = hueRect.height};
+    if (y < 0) { y = 0};
+    var percent = y / hueRect.height;
+    hue = 360 - (360 * percent);
+    var hueColor = tinycolor('hsl ' + hue + ' 1 .5').toHslString();
+    var color = tinycolor('hsl ' + hue + ' ' + saturation + ' ' + lightness).toHslString();
+    createShadeSpectrum(hueColor);
+    updateHueCursor(y, hueColor);
+    setCurrentColor(color);
+    setColorValues(color);
+};
 
-/*------------------- ARCANE *----------------------*/
-$("#arcane_id").mousedown(function(){
-    window.neural_filt = "arcane";
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1);
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.arcane_filt !== ""){
-            style_filter[0] = window.arcane_filt;
-            updateAnime(window.arcane_filt);
-        }
-        else{
-            arcane();
-        }
-    }
-})
+function endGetHueColor(e) {
+    hueCursor.classList.remove('dragging');
+    window.removeEventListener('mousemove', getHueColor);
+};
 
-async function arcane() {
-    isProcessing = !0,
-    showLoader();
-    var e = window.og_img
-      , t = {};
-    t.img = e
-    $.ajax({
-        url:'/arcane',
-        type: "POST",
-        data: JSON.stringify(t),
-        contentType: "application/json",
-        dataType: "json",
-        crossDomain: true,
-        
-        success: function(jsondata){
-            hasResult = !0,
-            payload = jsondata,
-            updateAnime(payload.bg_img);
-            window.arcane_filt = payload.bg_img;
-        },
-        timeout:360000,
-        error:function (){
-            showInfoCont(2),
-            hasResult = !1,
-            window.arcane_filt = "";
-            reset_canvas();
+red.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
 
-        },
-        complete: function() {
-            isProcessing = !1,
-            hideLoader();
-            style_filter[0] = window.arcane_filt;
-            $(".side-container").removeClass("visible");
-            $(".enhance-container").addClass("visible");
-        }
-    })
-}
+green.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
 
+blue.addEventListener('change', function() {
+    var color = tinycolor('rgb ' + red.value + ' ' + green.value + ' ' + blue.value);
+    colorToPos(color);
+});
 
-/* ------------ enhancer --------------- */
-var style_filter = []
-
-
-$("#e1").mousedown(function(){
-    var url = "/enhance1"
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1);
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.enhancer_json[window.neural_filt+"_"+url]){
-            
-            updateAnime(window.enhancer_json[window.neural_filt+"_"+url]);
-        }
-        else{
-            enhance_filter(url);
-        }
-    }
-})
-
-$("#e2").mousedown(function(){
-    var url = "/enhance2";
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1);
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.enhancer_json[window.neural_filt+"_"+url]){
-            updateAnime(window.enhancer_json[window.neural_filt+"_"+url]);
-        }
-        else{
-            enhance_filter(url);
-        }
-
-    }
-})
-
-$("#e3").mousedown(function(){
-    var url = "/enhance3";
-    var h = sessionStorage.getItem("img_height");
-    var w = sessionStorage.getItem("img_width");
-    if (w > 6000 || h > 6000){
-        showInfoCont(1);
-        context_output.clearRect(0,0,canvas_output.width,canvas_output.height);
-        $("#canvas_input").css("display","block");
-    }
-    else{
-        if (window.enhancer_json[window.neural_filt+"_"+url]){
-            updateAnime(window.enhancer_json[window.neural_filt+"_"+url]);            
-        }
-        else{
-            enhance_filter(url);
-        }
-    }
-})
-
-$("#e4").mousedown(function(){
-    showInfoCont(6);
-})
-
-
-async function enhance_filter(url){
-
-    if (window.neural_filt == ""){
-        showInfoCont(5);
-    }
-    else{
-        isProcessing = !0,
-        showLoader();
-        var e = style_filter[0]
-        , t = {};
-        t.img = e;
-
-        $.ajax({
-            url:url,
-            type: "POST",
-            data: JSON.stringify(t),
-            contentType: "application/json",
-            dataType: "json",
-            crossDomain: true,
-            
-            success: function(jsondata){
-                hasResult = !0,
-                payload = jsondata,
-                updateAnime(payload.enhanced_img);
-                
-            },
-            timeout:360000,
-            error:function (){
-                if(e){
-                    showInfoCont(2);
-                }
-                else{
-                    showInfoCont(5);
-                }
-                hasResult = !1,
-                reset_canvas();
-
-            },
-            complete: function() {
-                isProcessing = !1,
-                hideLoader();
-                /* window.enhancer = neural_filt+'_'+url.split('/')[1]+'_'+payload.enhanced_img; */
-                /* var enhancer_json = {[url]:payload.enhanced_img}; */
-                window.enhancer_json[window.neural_filt+"_"+url] = payload.enhanced_img;
-            }
-        })
-    }
-}
-
-
-
-/*--------------------------------------------*/
-
-async function colorSplash() {
-    isProcessing = !0,
-    showLoader();
-    var e = window.og_img
-      , t = {};
-    t.img = e
-    
-    $.ajax({
-        url: "color_splash",
-        type: "POST",
-        data: JSON.stringify(t),
-        crossDomain: !0,
-        contentType: "application/json",
-        dataType: "json",
-        success: function(jsondata,textStatus,jqXHR) {
-            hasResult = !0,
-            payload = jsondata,
-            updateCanvas(payload.bg_grayscale),
-            window.grayscale = payload.bg_grayscale;
-            $("#canvas_input").css("display","none"),
-            $("#canvas_output").css("display","block")
-        },
-        error: function () {
-            showInfoCont(2),
-            hasResult = !1,
-            reset_canvas();
-        },
-        complete: function() {
-            isProcessing = !1,
-            hideLoader()
-        }
-    })
-}
-
-async function sendCanvas() {
-    isProcessing = !0,
-    showLoader();
-    var e = window.og_img
-      , t = {};
-    t.img = e
-    
-    $.ajax({
-        url: "/",
-        type: "post",
-        data: JSON.stringify(t),
-        crossDomain: !0,
-        contentType: "application/json",
-        dataType: "json",
-        success: function(jsondata,textStatus,jqXHR) {
-            hasResult = !0,
-            payload = jsondata,
-            updateCanvas(payload.img_with_bk),
-            $("#canvas_input").css("display","none"),
-            $("#canvas_output").css("display","block"),
-            sessionStorage.setItem("img",payload.img_with_bk);
-        },
-        error: function () {
-            showInfoCont(2),
-            hasResult = !1,
-            reset_canvas();
-        },
-        complete: function() {
-            isProcessing = !1,
-            hideLoader();
-            $(".enhance-container").removeClass("visible");
-            $(".side-container").addClass("visible");
-        }
-    })
-}
-
+window.addEventListener('resize', function() {
+    refreshElementRects();
+});
 
 function preventScroll(e){
     e.preventDefault();
     e.stopPropagation();
     return false;
 }
+
+$("#wrapper").mousedown(function(){
+    //document.querySelector('.color_cover').addEventListener('wheel', preventScroll);
+    //document.querySelector('.color-picker-panel').addEventListener('wheel', preventScroll);
+    var color_cover = document.querySelector('.color_cover');
+    var color_picker_panel = document.querySelector('.color-picker-panel');
+    bodyScrollLock.disableBodyScroll(color_cover);
+    bodyScrollLock.disableBodyScroll(color_picker_panel);
+    
+    
+    //bodyScrollLock.disableBodyScroll()
+
+    $(".color_cover").css("display","flex");
+    $(".color-picker-panel").css("display","block");
+    refreshElementRects();
+    isMobile ? TweenMax.to(window, 1, {
+        scrollTo: {
+            //y: "#sec_2_canvas_wrap_1",
+            y: "#sec_1",
+            offsetY: 120
+        },
+        ease: Power2.easeInOut
+    }) : TweenMax.to(window, 1, {
+        scrollTo: "#sec_1",
+        //scrollTo: "#sec_2",
+        ease: Power2.easeInOut
+    })
+})
+
+new ColorPicker(); 
+
+$("#ok-set").mousedown(function(){
+    var m = sessionStorage.getItem("img");
+    var color_cover = document.querySelector('.color_cover');
+    var color_picker_panel = document.querySelector('.color-picker-panel');
+    var colour = sessionStorage.getItem("multi-color");
+    updateCanvas(m,colour);
+    bodyScrollLock.enableBodyScroll(color_cover);
+    bodyScrollLock.enableBodyScroll(color_picker_panel);
+    $(".color-picker-panel").css("display","none");
+    $(".color_cover").css("display","none");
+})
 
 
 var filter = [];
@@ -708,7 +551,9 @@ var filter = [];
 $("#white").mousedown(function(){
     filter[0] = "glitch-effect";
     var s = sessionStorage.getItem("img");
+
     glitchEffect(s);
+    
     //context_output.filter = "contrast(1.4) sepia(1) drop-shadow(-9px 9px 3px #e81)";
     //updateCanvas(s,"rgb(255,255,255)");
 })
@@ -898,6 +743,36 @@ $("#duo-tone_5").mousedown(function(){
 // Get all the tabs
 
 
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(clickedTab => {
+    // Add onClick event listener on each tab
+    clickedTab.addEventListener('click', () => {
+        // Remove the active class from all the tabs (this acts as a "hard" reset)
+        tabs.forEach(tab => {
+            tab.classList.remove('active'); 
+        });
+        // Add the active class on the clicked tab
+        clickedTab.classList.add('active');
+		const clickedTabBGColor = getComputedStyle(clickedTab).getPropertyValue('color');
+		//console.log(clickedTabBGColor);
+        if (clickedTabBGColor == "rgb(91, 55, 183)"){
+            document.getElementById("first-tab").style.display = "flex";
+            document.getElementById("second-tab").style.display = "none";
+            document.getElementById("third-tab").style.display = "none";
+        }
+        if (clickedTabBGColor == "rgb(201, 55, 157)"){
+            document.getElementById("first-tab").style.display = "none";
+            document.getElementById("second-tab").style.display = "flex";
+            document.getElementById("third-tab").style.display = "none";
+        }
+
+        if (clickedTabBGColor == "rgb(230, 169, 25)"){
+            document.getElementById("first-tab").style.display = "none";
+            document.getElementById("second-tab").style.display = "none";
+            document.getElementById("third-tab").style.display = "flex";
+        }
+    });
+});
 /* ---------------------------------------------------------------------- */
 
 
@@ -944,7 +819,104 @@ function fg_filter(e,color1,color2,mode1,mode2) {
     downloadedImg.src = "data:image/png;base64, " + e;
 }
 
+async function sendCanvas() {
+    isProcessing = !0,
+    showLoader();
+    var e = canvas_output.toDataURL()
+      , t = {};
+    t.img = e
+    
+    $.ajax({
+        url: "/",
+        type: "post",
+        data: JSON.stringify(t),
+        crossDomain: !0,
+        contentType: "application/json",
+        dataType: "json",
+        success: function(jsondata,textStatus,jqXHR) {
+            hasResult = !0,
+            payload = jsondata,
+            clearCanvas(),
+            $("#canvas_input").css("display","none"),
+            $(".modal-body").css("display","block"),
+            updateCanvas(payload.img_with_bk),
+            sessionStorage.setItem("img",payload.img_with_bk);
+            
+        },
+        error: function () {
+            showInfoCont(2),
+            hasResult = !1,
+            sessionStorage.removeItem("img")
+        },
+        complete: function() {
+            isProcessing = !1,
+            window.name = "",
+            hideLoader()
+        }
+    })
+}
 
+$("#animate").mousedown(function(){
+
+    var m = sessionStorage.getItem("img");
+    var h = sessionStorage.getItem("img_height");
+    var w = sessionStorage.getItem("img_width");
+    if (w > 6000 || h > 6000){
+        showInfoCont(1)
+    }
+    else{
+        if (m!==null){
+            if (window.name !== ""){
+                updateAnime(window.name);
+            }
+            else{
+                anime();
+            }
+        }
+    }
+    
+})
+
+
+
+
+
+async function anime() {
+    
+
+    isProcessing = !0,
+    showLoader();
+    var e = canvas_output.toDataURL()
+      , t = {};
+    t.img = e
+    $.ajax({
+        //url: "https://picai-animate.herokuapp.com/por2anime",
+        //url: "http://pic-api-dev.ap-south-1.elasticbeanstalk.com/por2anime",
+        url: "http://127.0.0.1:5000/por2anime",
+        type: "POST",
+        data: JSON.stringify(t),
+        contentType: "application/json",
+        dataType: "json",
+        crossDomain: true,
+        
+        success: function(jsondata){
+            hasResult = !0,
+            payload = jsondata,
+            updateAnime(payload.bg_img)
+            window.name = payload.bg_img
+        },
+        timeout:360000,
+        error:function (){
+            showInfoCont(2),
+            hasResult = !1,
+            window.name = ""
+        },
+        complete: function() {
+            isProcessing = !1,
+            hideLoader()
+        }
+    })
+}
 
 function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
     t = new Image();
@@ -1170,35 +1142,38 @@ function updateAnime(e) {
     
     t.onload = function() {
         var e = t.width / canvas_output.width;
-        
+
         if (filter[0]=="glitch-effect"){
             clearCanvas();
             var index = filter.indexOf("glitch-effect");
             filter.splice(index,1);
+            //console.log(filter); 
         }
 
         if (filter[1]=="background-change"){
             clearCanvas();
             var index = filter.indexOf("background-change");
             filter.splice(index,1);
+            //console.log(filter); 
         }
 
         if (filter[2] == "fg_filter"){
             clearCanvas();
             var index = filter.indexOf("fg_filter");
             filter.splice(index,2);
+            //console.log(filter); 
         }
 
-        
         context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
         for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
             n[o] = n[o++] << 8;
-
         context_output.globalCompositeOperation = "source-in",
         context_output.putImageData(a, 0),
-        context_output.drawImage(canvas_output, 0, 0),
+        
+        //context_output.drawImage(canvas_output, 0, 0),
+        context_output.drawImage(canvas_output,0,0),
+        
         context_output.globalCompositeOperation = "source-over",
-
         $("#sec_2_img_alpha_dim").html(canvas_output.width + "x" + canvas_output.height + "px"),
         isMobile && TweenMax.to(window, 1, {
             scrollTo: {
@@ -1214,44 +1189,38 @@ function updateAnime(e) {
 
 async function updateCanvas(e,color,color1) {
     var t = new Image;
-    var s = new Image;
     context_output.filter = "none";
-
     t.onload = function() {
-        var e = t.width / canvas_output.width;    
+        var e = t.width / canvas_output.width;
         
         if (filter[0]=="glitch-effect"){
             clearCanvas();
             var index = filter.indexOf("glitch-effect");
             filter.splice(index,1);
+            //console.log(filter); 
         }
 
         if (filter[1]=="background-change"){
             clearCanvas();
             var index = filter.indexOf("background-change");
             filter.splice(index,1);
+            //console.log(filter); 
         }
 
         if (filter[2] == "fg_filter"){
             clearCanvas();
             var index = filter.indexOf("fg_filter");
             filter.splice(index,2);
+            //console.log(filter); 
         }
 
-        if (window.anime_filt !== null){
-            clearCanvas();
-        }
-
-        if (window.arcane_filt !== null){
-            clearCanvas();
-        }
         
-        context_output.globalCompositeOperation = "destination-atop";
+
         context_output.drawImage(t, 0, 0, t.width, t.height, (canvas_output.width - t.width / e) / 2, (canvas_output.height - t.height / e) / 2, t.width / e, t.height / e);
         for (var a = context_output.getImageData(0, 0, canvas_output.width, canvas_output.height), n = new Uint32Array(a.data.buffer), o = 0, i = n.length; o < i; )
         n[o] = n[o++] << 8;
-        context_output.globalCompositeOperation = "source-in";
         
+
         if (color && color1){
             var grad = context.createLinearGradient(0,100,canvas_output.width,canvas_output.height);
             context_output.createLinearGradient(300,0,300,200);
@@ -1277,20 +1246,6 @@ async function updateCanvas(e,color,color1) {
             context_output.globalCompositeOperation = "source-over";
         }
 
-        else{
-            s.onload = function(){
-                context_output.globalCompositeOperation = "destination-atop";
-                context_output.drawImage(s,0,0,canvas_output.width,canvas_output.height);
-                context_output.globalCompositeOperation = "source-in";
-                context_output.putImageData(a,0);
-                context_output.globalCompositeOperation = "source-over";
-                
-            }
-            s.src = "static/img/960e070fd7d1d7c6dac6d666284e6453.jpg";
-            
-        }
-
-
         $("#sec_2_img_alpha_dim").html(canvas_output.width + "x" + canvas_output.height + "px"),
         isMobile && TweenMax.to(window, 1, {
             scrollTo: {
@@ -1302,9 +1257,8 @@ async function updateCanvas(e,color,color1) {
     }
     ,
     t.src = "data:image/png;base64, " + e;
+    
 }
-
-
 
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -1334,48 +1288,6 @@ function showInfoCont(e) {
         }
     })
 }
-
-/* ------------- mobile ui ------------- */
-
-function mobuleUI(){
-    TweenMax.to("#mobilui-cover", .2, {
-        autoAlpha: 1,
-        ease: Linear.easeNone,
-        onStart: function() {
-            $("#mobilui-cover").css("display", "block");
-            $("#info_wrap").css("display", "block");
-        }
-    })
-}
-
-function hidemobileui() {
-    TweenMax.to("#mobilui-cover", .2, {
-        autoAlpha: 0,
-        ease: Linear.easeNone,
-        onComplete: function() {
-            $("#mobilui-cover").css("display", "none");
-            $("#info_wrap").css("display", "block");
-        }
-    })
-}
-
-function getDimensions() {
-        
-    if (window.innerWidth < 769){
-        mobuleUI();
-    }
-    else{
-        hidemobileui();
-    }
-}
-
-//lListen for window.resize
-window.addEventListener('resize', getDimensions);
-
-// call once to initialize page
-getDimensions();
-
-/* --------------------------------- */
 
 
 function hideInfoCont() {
