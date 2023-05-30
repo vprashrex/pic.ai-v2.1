@@ -47,7 +47,7 @@ COPY ./src/requirements.txt /app/requirements.txt
 RUN /opt/venv/bin/pip install -r /app/requirements.txt
 
 RUN /opt/venv/bin/gdown --id 1WPBjn3vhQOJxafBa_89lbYwJfolKVMu6
-RUN unzip weights.zip -d /app/
+RUN sudo unzip weights.zip -d /app/
 
 #COPY ./src/weights/ /app/weights/
 #RUN ls -la ./src/weights/*
